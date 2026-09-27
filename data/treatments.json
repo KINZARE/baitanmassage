@@ -12,8 +12,8 @@
     ],
     "seoTitle": "Thaise Massage Capelle aan den IJssel | Baitan",
     "seoDescription": "Thaise massage in Capelle aan den IJssel bij Baitan. Traditionele Thaise technieken met warme olie. Bekijk 60, 90 en 120 minuten en boek online.",
-    "image": "https://images.pexels.com/photos/6628601/pexels-photo-6628601.jpeg?auto=compress&cs=tinysrgb&w=2000",
-    "imageAlt": "Sfeerbeeld van een professionele Thaise massage",
+    "image": "/assets/images/baitan-hero-atmospheric.webp",
+    "imageAlt": "Sfeervolle Thaise massage bij Baitan in Capelle aan den IJssel",
     "active": true,
     "durations": [
       {
@@ -44,7 +44,7 @@
     ],
     "seoTitle": "Aromatherapie Massage Capelle aan den IJssel | Baitan",
     "seoDescription": "Aromatherapie massage in Capelle aan den IJssel bij Baitan. Thaise oliemassage met een geur naar keuze. Bekijk prijzen en boek online.",
-    "image": "https://images.pexels.com/photos/5240675/pexels-photo-5240675.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "image": "/assets/images/thai-oil-massage.webp",
     "imageAlt": "Sfeerbeeld van een ontspannende oliemassage",
     "active": true,
     "durations": [
@@ -76,8 +76,8 @@
     ],
     "seoTitle": "Sportmassage Capelle aan den IJssel | Baitan",
     "seoDescription": "Sportmassage in Capelle aan den IJssel bij Baitan. Bekijk actuele prijzen voor 60, 90 en 120 minuten en boek direct online.",
-    "image": "https://images.pexels.com/photos/6188115/pexels-photo-6188115.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    "imageAlt": "Sfeerbeeld van een professionele massagebehandeling",
+    "image": "/assets/images/thai-leg-massage.webp",
+    "imageAlt": "Sfeerbeeld van een stevige beenmassage",
     "active": true,
     "durations": [
       {
@@ -108,7 +108,7 @@
     ],
     "seoTitle": "Hot Stone Massage Capelle aan den IJssel | Baitan",
     "seoDescription": "Hot stone massage in Capelle aan den IJssel bij Baitan met warme stenen. Bekijk 60, 90 en 120 minuten, prijzen en online beschikbaarheid.",
-    "image": "https://images.pexels.com/photos/10976271/pexels-photo-10976271.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "image": "/assets/images/hot-stone-massage.webp",
     "imageAlt": "Sfeerbeeld van een hot stone massage",
     "active": true,
     "durations": [
@@ -140,8 +140,8 @@
     ],
     "seoTitle": "Duo Massage Capelle aan den IJssel | Baitan",
     "seoDescription": "Duo massage in Capelle aan den IJssel bij Baitan. Boek samen met een vriend, vriendin of partner. Bekijk duur, prijzen en beschikbaarheid.",
-    "image": "https://images.pexels.com/photos/7365407/pexels-photo-7365407.jpeg?auto=compress&cs=tinysrgb&w=1800",
-    "imageAlt": "Sfeerbeeld van een duo-massage",
+    "image": "/assets/images/thai-back-massage.webp",
+    "imageAlt": "Sfeerbeeld van een massagebehandeling",
     "active": true,
     "durations": [
       {
