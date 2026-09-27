@@ -41,8 +41,8 @@ def booking(site, treatments):
 
     if provider == "salonized":
         if salonized_link:
-            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Salonized</div><h3>Bekijk beschikbare tijden</h3><p>Open de actuele online agenda van Baitan en kies direct een beschikbaar moment.</p><a class="btn booking-submit" href="{esc(salonized_link)}" target="_blank" rel="noopener">Boek online <span aria-hidden="true">→</span></a></div></div>'''
-            status_text='Beschikbaarheid en afspraken verlopen via Salonized.'
+            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Online agenda</div><h3>Bekijk beschikbare tijden</h3><p>Kies je behandeling en reserveer direct via de officiële online agenda van Baitan.</p><a class="btn booking-submit" href="{esc(salonized_link)}" target="_blank" rel="noopener">Bekijk tijden &amp; boek <span aria-hidden="true">→</span></a></div></div>'''
+            status_text='Je wordt doorgestuurd naar de officiële online agenda van Baitan.'
         else:
             phone='tel:'+str(site.get('phoneHref') or '')
             booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Salonized</div><h3>Online reserveren</h3><p>De Salonized-reserveringslink wordt aan deze demo gekoppeld zodra de salon de officiële boekingslink heeft aangeleverd.</p><a class="btn booking-submit" href="{esc(phone)}">Bel voor een afspraak <span aria-hidden="true">→</span></a></div></div>'''
@@ -103,8 +103,8 @@ def prices_section(site, treatments):
         for d in (t.get('durations') or []):
             minutes=int(d.get('minutes') or 0)
             price=money(d.get('price'))
-            options.append(f'<a class="price-option" href="{esc(booking_url)}"{external} aria-label="Boek {esc(t.get("name"))}, {minutes} minuten voor {price} via Salonized"><span class="price-duration">{minutes} min</span><strong>{price}</strong></a>')
-        rows.append(f'<div class="price-treatment"><div class="price-treatment-head"><h3>{esc(t.get("name"))}</h3><a class="price-book-link" href="{esc(booking_url)}"{external}>Boek via Salonized <span aria-hidden="true">→</span></a></div><div class="price-options">{"" .join(options)}</div></div>')
+            options.append(f'<a class="price-option" href="{esc(booking_url)}"{external} aria-label="Boek {esc(t.get("name"))}, {minutes} minuten voor {price} in de online agenda"><span class="price-duration">{minutes} min</span><strong>{price}</strong></a>')
+        rows.append(f'<div class="price-treatment"><div class="price-treatment-head"><h3>{esc(t.get("name"))}</h3><a class="price-book-link" href="{esc(booking_url)}"{external}>Kies tijd &amp; boek <span aria-hidden="true">→</span></a></div><div class="price-options">{"" .join(options)}</div></div>')
     return f'''<section class="section" id="prijzen"><div class="container"><div class="section-head"><div><div class="eyebrow">Prijzen</div><h2>Duidelijk vooraf</h2><p>Bekijk direct de duur en prijs. Tik op een optie om te reserveren via Salonized.</p></div><a class="btn btn-outline" href="{esc(booking_url)}"{external}>Afspraak maken</a></div><div class="price-list price-list-clear">{''.join(rows)}</div></div></section>'''
 
 def about_section(site):
@@ -291,8 +291,8 @@ def prices_page(site, treatments):
         for d in t.get('durations',[]):
             minutes=int(d.get('minutes') or 0)
             price=money(d.get('price'))
-            options.append(f'<a class="price-option" href="{esc(booking_url)}"{external} aria-label="Boek {esc(t.get("name"))}, {minutes} minuten voor {price} via Salonized"><span class="price-duration">{minutes} min</span><strong>{price}</strong></a>')
-        rows.append(f'<div class="price-treatment"><div class="price-treatment-head"><h2><a href="/{esc(t.get("slug"))}">{esc(t.get("name"))}</a></h2><a class="price-book-link" href="{esc(booking_url)}"{external}>Boek via Salonized <span aria-hidden="true">→</span></a></div><div class="price-options">{"" .join(options)}</div></div>')
+            options.append(f'<a class="price-option" href="{esc(booking_url)}"{external} aria-label="Boek {esc(t.get("name"))}, {minutes} minuten voor {price} in de online agenda"><span class="price-duration">{minutes} min</span><strong>{price}</strong></a>')
+        rows.append(f'<div class="price-treatment"><div class="price-treatment-head"><h2><a href="/{esc(t.get("slug"))}">{esc(t.get("name"))}</a></h2><a class="price-book-link" href="{esc(booking_url)}"{external}>Kies tijd &amp; boek <span aria-hidden="true">→</span></a></div><div class="price-options">{"" .join(options)}</div></div>')
     body=f'''<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">Baitan Thai Massage</div><h1>Massageprijzen in Capelle aan den IJssel</h1><p>Bekijk in één oogopslag de duur en prijs per massage. Tik op een prijs om direct via Salonized te reserveren.</p></div></section><section class="section"><div class="container"><div class="price-list price-list-clear">{''.join(rows)}</div><div class="hero-actions"><a class="btn" href="{esc(booking_url)}"{external}>Afspraak maken</a><a class="btn btn-outline" href="/massages">Bekijk behandelingen</a></div></div></section></main>'''
     return subpage_head(site,'Massage Prijzen Capelle aan den IJssel | Baitan','Bekijk de actuele prijzen van Baitan Thai Massage in Capelle aan den IJssel voor 60, 90 en 120 minuten.',canonical,[("Home",base+"/"),("Prijzen",canonical)])+subpage_header()+body+footer(site)+'<script src="/app.js"></script></body></html>'
 
