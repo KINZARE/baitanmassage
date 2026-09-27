@@ -90,7 +90,7 @@ document.querySelectorAll('[data-service]').forEach(link=>link.addEventListener(
 
 document.querySelectorAll('.faq-question').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.faq-item');const open=item.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));}));
 const menuToggle=document.querySelector('.menu-toggle');const navLinks=document.querySelector('.nav-links');
-if(menuToggle&&navLinks){menuToggle.addEventListener('click',()=>{const open=navLinks.classList.toggle('open');document.body.classList.toggle('nav-open',open);menuToggle.setAttribute('aria-expanded',String(open));});navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{navLinks.classList.remove('open');document.body.classList.remove('nav-open');menuToggle.setAttribute('aria-expanded','false');}));}
+if(menuToggle&&navLinks){navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{navLinks.classList.remove('open');document.body.classList.remove('nav-open');menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Open menu');}));}
 
 const mobileBook=document.querySelector('.mobile-book');
 const bookingSection=document.querySelector('#boeken');
@@ -131,7 +131,7 @@ document.querySelectorAll('.load-map').forEach(button=>{
 });
 
 // Five-question massage choice helper.
-const choiceShell=document.querySelector('.choice-shell');
+const choiceShell=document.querySelector('.choice-card, .choice-shell');
 if(choiceShell){
   const questions=[...choiceShell.querySelectorAll('.choice-question')];
   const result=choiceShell.querySelector('#choiceResult');
@@ -157,7 +157,7 @@ if(choiceShell){
   function showStep(index){
     questions.forEach((q,i)=>q.hidden=i!==index);
     if(progressText)progressText.textContent=`Vraag ${Math.min(index+1,5)} van 5`;
-    if(progressBar)progressBar.style.width=`${Math.min((index/5)*100,100)}%`;
+    if(progressBar)progressBar.style.width=`${Math.min(((index+1)/5)*100,100)}%`;
   }
   function finish(){
     questions.forEach(q=>q.hidden=true);
@@ -185,10 +185,18 @@ if(choiceShell){
         },{once:true});
       }
     }
-    if(result)result.hidden=false;
+    if(result){
+      result.hidden=false;
+      result.setAttribute('tabindex','-1');
+      if(window.matchMedia('(max-width: 720px)').matches){
+        requestAnimationFrame(()=>result.scrollIntoView({behavior:'smooth',block:'nearest'}));
+      }
+    }
   }
   questions.forEach((q,index)=>{
     q.querySelectorAll('.choice-option').forEach(btn=>btn.addEventListener('click',()=>{
+      q.querySelectorAll('.choice-option').forEach(option=>option.setAttribute('aria-pressed','false'));
+      btn.setAttribute('aria-pressed','true');
       const score=btn.dataset.score;
       if(score==='neutral'){
         Object.keys(scores).forEach(k=>scores[k]+=0.2);
@@ -203,7 +211,9 @@ if(choiceShell){
     scores={thai:0,aroma:0,sport:0,hotstone:0,duo:0};
     step=0;
     if(result)result.hidden=true;
+    questions.forEach(q=>q.querySelectorAll('.choice-option').forEach(option=>option.setAttribute('aria-pressed','false')));
     showStep(0);
+    questions[0]?.querySelector('.choice-option')?.focus({preventScroll:true});
   });
   showStep(0);
 }
@@ -347,4 +357,38 @@ if(reduceMotion || !('IntersectionObserver' in window)){
     });
   },{rootMargin:'0px 0px -8% 0px',threshold:.08});
   revealTargets.forEach(el=>revealObserver.observe(el));
+}
+
+
+/* Responsive navigation hardening */
+if(menuToggle&&navLinks){
+  const closeNav=()=>{
+    navLinks.classList.remove('open');
+    document.body.classList.remove('nav-open');
+    menuToggle.setAttribute('aria-expanded','false');
+    menuToggle.setAttribute('aria-label','Open menu');
+  };
+  const openNav=()=>{
+    navLinks.classList.add('open');
+    document.body.classList.add('nav-open');
+    menuToggle.setAttribute('aria-expanded','true');
+    menuToggle.setAttribute('aria-label','Sluit menu');
+  };
+  menuToggle.addEventListener('click',()=>{
+    navLinks.classList.contains('open') ? closeNav() : openNav();
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&navLinks.classList.contains('open')){
+      closeNav();
+      menuToggle.focus();
+    }
+  });
+  document.addEventListener('click',event=>{
+    if(!navLinks.classList.contains('open'))return;
+    if(navLinks.contains(event.target)||menuToggle.contains(event.target))return;
+    closeNav();
+  });
+  window.addEventListener('resize',()=>{
+    if(window.innerWidth>1050&&navLinks.classList.contains('open'))closeNav();
+  });
 }
