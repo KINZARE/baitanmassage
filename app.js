@@ -320,3 +320,31 @@ document.addEventListener('error', function (event) {
   img.dataset.fallbackApplied = 'true';
   img.src = fallback;
 }, true);
+
+
+/* 2026-09-27 interaction polish */
+document.documentElement.classList.add('js-motion');
+
+const polishHeader=document.querySelector('.header');
+function syncPolishHeader(){
+  polishHeader?.classList.toggle('is-scrolled',window.scrollY>10);
+}
+syncPolishHeader();
+window.addEventListener('scroll',syncPolishHeader,{passive:true});
+
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const revealTargets=[...document.querySelectorAll('main > section')];
+if(reduceMotion || !('IntersectionObserver' in window)){
+  revealTargets.forEach(el=>el.classList.add('is-visible'));
+}else{
+  revealTargets.forEach(el=>el.classList.add('ui-reveal'));
+  const revealObserver=new IntersectionObserver((entries,observer)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{rootMargin:'0px 0px -8% 0px',threshold:.08});
+  revealTargets.forEach(el=>revealObserver.observe(el));
+}
