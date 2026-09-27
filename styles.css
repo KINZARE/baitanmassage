@@ -933,3 +933,58 @@ main{min-width:0}
   .price-option strong{font-size:1rem}
   .choice-card .choice-progress{display:grid;grid-template-columns:auto 1fr}
 }
+
+
+/* 2026-09-27 treatment modal scroll fix */
+.treatment-dialog{
+  overflow:hidden;
+}
+.treatment-dialog .treatment-dialog-grid{
+  height:min(88dvh,900px);
+  min-height:0;
+  max-height:min(88dvh,900px);
+}
+.treatment-dialog .dialog-media,
+.treatment-dialog .dialog-content{
+  min-height:0;
+}
+.treatment-dialog .dialog-content{
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable;
+}
+.treatment-dialog .dialog-content::-webkit-scrollbar{
+  width:8px;
+}
+.treatment-dialog .dialog-content::-webkit-scrollbar-thumb{
+  background:rgba(57,67,51,.24);
+  border-radius:999px;
+}
+.treatment-dialog .dialog-content::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+@media(max-width:720px){
+  .treatment-dialog{
+    max-height:92dvh;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .treatment-dialog .treatment-dialog-grid{
+    height:auto;
+    max-height:none;
+    min-height:0;
+    display:block;
+  }
+  .treatment-dialog .dialog-media{
+    position:relative;
+    min-height:0;
+    aspect-ratio:16/10;
+  }
+  .treatment-dialog .dialog-content{
+    overflow:visible;
+    padding-bottom:calc(30px + env(safe-area-inset-bottom));
+  }
+}
