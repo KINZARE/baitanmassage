@@ -988,3 +988,39 @@ main{min-width:0}
     padding-bottom:calc(30px + env(safe-area-inset-bottom));
   }
 }
+
+
+/* 2026-09-27 fixed WhatsApp contact */
+.whatsapp-float{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:88;
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#25d366;
+  color:#fff;
+  box-shadow:0 12px 30px rgba(20,32,20,.24);
+  border:1px solid rgba(255,255,255,.72);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.whatsapp-float svg{width:27px;height:27px;fill:currentColor}
+.whatsapp-float:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(20,32,20,.28)}
+.whatsapp-float:focus-visible{outline:3px solid #fff;outline-offset:3px}
+html.has-salonized-widget .whatsapp-float{bottom:88px}
+@media(max-width:720px){
+  .whatsapp-float{
+    width:48px;
+    height:48px;
+    right:14px;
+    bottom:calc(94px + env(safe-area-inset-bottom));
+  }
+  .whatsapp-float svg{width:25px;height:25px}
+  html.has-salonized-widget .whatsapp-float{bottom:calc(82px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+  .whatsapp-float{transition:none}
+}

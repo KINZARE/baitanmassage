@@ -24,6 +24,7 @@ content:
       - {name: phoneHref, label: Telefoonnummer technisch (+31...), type: string, required: true}
       - {name: email, label: E-mailadres, type: string, required: true}
       - {name: whatsappUrl, label: WhatsApp-link, type: string}
+      - {name: whatsappMessage, label: Vooraf ingevuld WhatsApp-bericht, type: string}
       - {name: address, label: Volledig adres, type: string, required: true}
       - {name: addressLine1, label: Straat en huisnummer, type: string, required: true}
       - {name: postalCity, label: Postcode en plaats, type: string, required: true}
@@ -69,6 +70,15 @@ content:
                 - {name: custom, label: Eigen reserveringssysteem}
                 - {name: salonized, label: Salonized}
           - {name: salonizedBookingUrl, label: Salonized boekingslink, type: string, description: 'Plak hier de officiële online boekingslink uit het Salonized-account van de salon.'}
+          - {name: salonizedCompanyId, label: Salonized widget-ID, type: string, description: 'Unieke data-company ID uit de officiële Salonized widgetcode. Leeg = boekingslink als veilige fallback.'}
+          - {name: salonizedWidgetColor, label: Salonized widgetkleur, type: string, description: 'Hex-kleur, bijvoorbeeld #3f4932.'}
+          - name: salonizedWidgetPosition
+            label: Positie Salonized widgetknop
+            type: select
+            options:
+              values:
+                - {name: left, label: Links (aanbevolen naast WhatsApp rechts)}
+                - {name: right, label: Rechts}
           - name: image
             label: Foto bij boeken
             type: image
@@ -194,6 +204,7 @@ content:
           - {name: ogDescription, label: Omschrijving bij delen, type: text}
           - {name: ogImage, label: Social share afbeelding, type: string}
           - {name: canonical, label: Definitieve website-URL, type: string}
+          - {name: googleSiteVerification, label: Google Search Console verificatiecode, type: string, description: 'Alleen de content-waarde uit de google-site-verification meta-tag.'}
 
   - name: treatments
     label: Massages & prijzen

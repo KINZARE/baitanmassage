@@ -1,5 +1,8 @@
 const cmsTreatments = Array.isArray(window.BAITAN_TREATMENTS) ? window.BAITAN_TREATMENTS : [];
 const siteConfig = window.BAITAN_SITE || {};
+const hasSalonizedWidget = siteConfig?.booking?.provider === 'salonized' && Boolean(String(siteConfig?.booking?.salonizedCompanyId || '').trim());
+const bookingHref = hasSalonizedWidget ? '#sz-booking-toggle' : String(siteConfig?.booking?.salonizedBookingUrl || '#boeken');
+document.documentElement.classList.toggle('has-salonized-widget', hasSalonizedWidget);
 const apiBase = String(siteConfig?.booking?.apiBase || '').replace(/\/$/, '');
 const services = Object.fromEntries(cmsTreatments.map(t => [t.id, {
   name: t.name,
@@ -169,11 +172,16 @@ if(choiceShell){
     if(resultText)resultText.textContent=messages[best]||'Bekijk deze behandeling bij Baitan.';
     if(resultDetail)resultDetail.href=t?.slug?`/${t.slug}`:'/massages';
     if(resultBook){
-      const salonized=siteConfig?.booking?.provider==='salonized' ? siteConfig?.booking?.salonizedBookingUrl : '';
+      const salonized=siteConfig?.booking?.provider==='salonized' ? bookingHref : '';
       if(salonized){
         resultBook.href=salonized;
-        resultBook.target='_blank';
-        resultBook.rel='noopener';
+        if(hasSalonizedWidget){
+          resultBook.removeAttribute('target');
+          resultBook.removeAttribute('rel');
+        }else{
+          resultBook.target='_blank';
+          resultBook.rel='noopener';
+        }
       }else{
         resultBook.dataset.service=best;
         resultBook.href='#boeken';
@@ -220,10 +228,16 @@ if(choiceShell){
 
 
 // Salonized is the active booking destination: make the floating CTA direct.
-if(mobileBook && siteConfig?.booking?.provider==='salonized' && siteConfig?.booking?.salonizedBookingUrl){
-  mobileBook.href=siteConfig.booking.salonizedBookingUrl;
-  mobileBook.target='_blank';
-  mobileBook.rel='noopener';
+if(mobileBook && siteConfig?.booking?.provider==='salonized'){
+  mobileBook.href=bookingHref;
+  if(hasSalonizedWidget){
+    mobileBook.removeAttribute('target');
+    mobileBook.removeAttribute('rel');
+    mobileBook.hidden=true;
+  }else if(bookingHref.startsWith('http')){
+    mobileBook.target='_blank';
+    mobileBook.rel='noopener';
+  }
 }
 
 // Treatment detail modal. Links remain normal SEO links without JavaScript.
@@ -250,9 +264,9 @@ if(treatmentDialog){
     dialogFeatures.innerHTML=(t.features||[]).map(x=>`<li>${x}</li>`).join('');
     dialogPrices.innerHTML=(t.durations||[]).map(d=>`<span><strong>${d.minutes} min</strong> €${Number(d.price).toLocaleString('nl-NL')}</span>`).join('');
     dialogPage.href=t.slug?`/${t.slug}`:'/massages';
-    const salonized=siteConfig?.booking?.provider==='salonized' ? siteConfig?.booking?.salonizedBookingUrl : '';
+    const salonized=siteConfig?.booking?.provider==='salonized' ? bookingHref : '';
     dialogBook.href=salonized||'#boeken';
-    if(salonized){dialogBook.target='_blank';dialogBook.rel='noopener';}
+    if(salonized && !hasSalonizedWidget){dialogBook.target='_blank';dialogBook.rel='noopener';}
     else{dialogBook.removeAttribute('target');dialogBook.removeAttribute('rel');}
     if(typeof treatmentDialog.showModal==='function')treatmentDialog.showModal();
     else treatmentDialog.setAttribute('open','');

@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import shutil
+from urllib.parse import quote
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -22,10 +24,62 @@ def load_json(path: str):
 def active_treatments(treatments):
     return [t for t in treatments if t.get("active", True)]
 
+def salonized_widget_active(site):
+    b = site.get("booking", {})
+    if str(b.get("provider") or "").lower() != "salonized":
+        return False
+    company_id = str(b.get("salonizedCompanyId") or "").strip()
+    return bool(re.fullmatch(r"[A-Za-z0-9_-]{8,80}", company_id))
+
+def booking_href(site):
+    if salonized_widget_active(site):
+        return "#sz-booking-toggle"
+    return str(site.get("booking", {}).get("salonizedBookingUrl") or "#boeken").strip() or "#boeken"
+
+def booking_attrs(site):
+    href = booking_href(site)
+    return ' target="_blank" rel="noopener"' if href.startswith("http") else ""
+
+def salonized_widget(site):
+    if not salonized_widget_active(site):
+        return ""
+    b = site.get("booking", {})
+    company_id = str(b.get("salonizedCompanyId") or "").strip()
+    color = str(b.get("salonizedWidgetColor") or "#3f4932").strip()
+    if not re.fullmatch(r"#[0-9A-Fa-f]{6}", color):
+        color = "#3f4932"
+    position = str(b.get("salonizedWidgetPosition") or "left").lower()
+    if position not in {"left", "right"}:
+        position = "left"
+    return (
+        '<div class="salonized-booking" data-company="' + esc(company_id) +
+        '" data-color="' + esc(color) +
+        '" data-language="nl" data-position="' + esc(position) +
+        '"></div><script src="https://static-widget.salonized.com/loader.js"></script>'
+    )
+
+def search_console_meta(site):
+    token = str(site.get("seo", {}).get("googleSiteVerification") or "").strip()
+    if not token:
+        return ""
+    token = re.sub(r"[^A-Za-z0-9_\-.:=]", "", token)
+    return f'<meta name="google-site-verification" content="{esc(token)}">' if token else ""
+
+def whatsapp_float(site):
+    base = str(site.get("whatsappUrl") or "").strip()
+    if not base:
+        return ""
+    message = str(site.get("whatsappMessage") or "Hallo Baitan, ik heb een vraag over een massage.").strip()
+    sep = "&" if "?" in base else "?"
+    href = base + sep + "text=" + quote(message, safe="")
+    icon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.2.3 11.7c0 2.1.6 4.2 1.6 6L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.3h.1c6.5 0 11.7-5.3 11.7-11.8 0-3.1-1.2-6.1-3.4-8.3Zm-8.4 18.1h-.1c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.9 1 1-3.8-.2-.4a9.7 9.7 0 1 1 8.6 4.8Zm5.3-7.2c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.9-1.6.1-.2.1-.4 0-.6-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .7.8.3 1.6.2 2.2.1.7-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>'
+    return f'<a class="whatsapp-float" href="{esc(href)}" target="_blank" rel="noopener" aria-label="Stuur Baitan een WhatsApp-bericht" title="WhatsApp Baitan">{icon}</a>'
+
 def hero(site):
     h = site["hero"]
-    return f'''<section class="hero hero-immersive" id="home"><img class="hero-bg" src="{esc(h.get('image'))}" alt="{esc(h.get('imageAlt'))}" width="1280" height="720" fetchpriority="high" decoding="async"><div class="hero-shade" aria-hidden="true"></div><div class="container hero-immersive-inner"><div class="hero-copy"><span class="eyebrow">{esc(h.get('eyebrow'))}</span><h1>{esc(h.get('title'))}</h1><p class="lead">{esc(h.get('text'))}</p><div class="hero-actions"><a class="btn" href="#boeken">{esc(h.get('primaryButton'))}</a><a class="btn btn-outline" href="#massagekeuze">{esc(h.get('secondaryButton'))}</a></div></div><a class="hero-scroll" href="#boeken" aria-label="Scroll naar online boeken">Bekijk mogelijkheden <span aria-hidden="true">↓</span></a></div></section>'''
-
+    book_href = booking_href(site)
+    book_attrs = booking_attrs(site)
+    return f'''<section class="hero hero-immersive" id="home"><img class="hero-bg" src="{esc(h.get('image'))}" alt="{esc(h.get('imageAlt'))}" width="1280" height="720" fetchpriority="high" decoding="async"><div class="hero-shade" aria-hidden="true"></div><div class="container hero-immersive-inner"><div class="hero-copy"><span class="eyebrow">{esc(h.get('eyebrow'))}</span><h1>{esc(h.get('title'))}</h1><p class="lead">{esc(h.get('text'))}</p><div class="hero-actions"><a class="btn" href="{esc(book_href)}"{book_attrs}>{esc(h.get('primaryButton'))}</a><a class="btn btn-outline" href="#massagekeuze">{esc(h.get('secondaryButton'))}</a></div></div><a class="hero-scroll" href="#boeken" aria-label="Scroll naar online boeken">Bekijk mogelijkheden <span aria-hidden="true">↓</span></a></div></section>'''
 
 def trustbar(site):
     o = site["opening"]; r = site["reviews"]; t = site["trust"]
@@ -40,14 +94,19 @@ def booking(site, treatments):
     image_label = b.get("imageLabel") or "Sfeerbeeld"
 
     if provider == "salonized":
-        if salonized_link:
-            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Online agenda</div><h3>Bekijk beschikbare tijden</h3><p>Kies je behandeling en reserveer direct via de officiële online agenda van Baitan.</p><a class="btn booking-submit" href="{esc(salonized_link)}" target="_blank" rel="noopener">Bekijk tijden &amp; boek <span aria-hidden="true">→</span></a></div></div>'''
-            status_text='Je wordt doorgestuurd naar de officiële online agenda van Baitan.'
+        target = booking_href(site)
+        attrs = booking_attrs(site)
+        if salonized_widget_active(site):
+            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Salonized</div><h3>Bekijk beschikbare tijden</h3><p>Open de officiële Salonized-agenda en reserveer zonder de website te verlaten.</p><a class="btn booking-submit" href="{esc(target)}"{attrs}>Bekijk tijden &amp; boek <span aria-hidden="true">→</span></a></div></div>'''
+            status_text = "De officiële Salonized-booking opent direct op deze pagina."
+        elif salonized_link:
+            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Online agenda</div><h3>Bekijk beschikbare tijden</h3><p>Kies je behandeling en reserveer direct via de officiële online agenda van Baitan.</p><a class="btn booking-submit" href="{esc(target)}"{attrs}>Bekijk tijden &amp; boek <span aria-hidden="true">→</span></a></div></div>'''
+            status_text = "Je opent de officiële online agenda van Baitan in Salonized."
         else:
             phone='tel:'+str(site.get('phoneHref') or '')
-            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Salonized</div><h3>Online reserveren</h3><p>De Salonized-reserveringslink wordt aan deze demo gekoppeld zodra de salon de officiële boekingslink heeft aangeleverd.</p><a class="btn booking-submit" href="{esc(phone)}">Bel voor een afspraak <span aria-hidden="true">→</span></a></div></div>'''
+            booking_ui = f'''<div class="external-booking-panel"><div><div class="eyebrow">Salonized</div><h3>Online reserveren</h3><p>De Salonized-reserveringslink ontbreekt. Bel Baitan om een afspraak te maken.</p><a class="btn booking-submit" href="{esc(phone)}">Bel voor een afspraak <span aria-hidden="true">→</span></a></div></div>'''
             status_text='Het reserveringssysteem van Baitan is Salonized.'
-        return f'''<section class="section" id="boeken"><div class="container"><div class="section-head"><div><div class="eyebrow">{esc(b.get('kicker'))}</div><h2>{esc(b.get('title'))}</h2></div><p>{esc(b.get('text'))}</p></div><div class="booking-shell external-booking"><div class="booking-copy booking-copy-rich"><figure class="booking-visual"><img src="{esc(image)}" alt="{esc(image_alt)}" loading="lazy"><figcaption>{esc(image_label)}</figcaption></figure><div class="booking-copy-text"><div class="eyebrow">Online reserveren</div><h3>{esc(b.get('panelTitle'))}</h3><p>{esc(status_text)}</p></div></div>{booking_ui}</div></div></section>'''
+        return f'''<section class="section" id="boeken"><div class="container"><div class="section-head"><div><div class="eyebrow">{esc(b.get('kicker'))}</div><h2>{esc(b.get('title'))}</h2></div><p>{esc(b.get('text'))}</p></div><div class="booking-shell external-booking"><div class="booking-copy booking-copy-rich"><figure class="booking-visual"><img src="{esc(image)}" alt="{esc(image_alt)}" loading="lazy" decoding="async"><figcaption>{esc(image_label)}</figcaption></figure><div class="booking-copy-text"><div class="eyebrow">Online reserveren</div><h3>{esc(b.get('panelTitle'))}</h3><p>{esc(status_text)}</p></div></div>{booking_ui}</div></div></section>'''
 
     options = ''.join(f'<option value="{esc(t["id"])}">{esc(t["name"])}</option>' for t in active_treatments(treatments))
     return f'''<section class="section" id="boeken"><div class="container"><div class="section-head"><div><div class="eyebrow">{esc(b.get('kicker'))}</div><h2>{esc(b.get('title'))}</h2></div><p>{esc(b.get('text'))}</p></div><div class="booking-shell"><div class="booking-copy"><div class="eyebrow">Reserveren</div><h3 style="font-size:2.4rem;margin-top:12px">{esc(b.get('panelTitle'))}</h3><ol class="booking-steps"><li class="booking-step"><span class="booking-step-num">01</span><span>Behandeling</span></li><li class="booking-step"><span class="booking-step-num">02</span><span>Datum &amp; tijd</span></li><li class="booking-step"><span class="booking-step-num">03</span><span>Bevestigen</span></li></ol></div><div class="booking-panel">
@@ -61,11 +120,10 @@ def booking(site, treatments):
 <div class="booking-confirmation" id="bookingConfirmation" hidden><div class="confirmation-mark" aria-hidden="true">✓</div><div><div class="eyebrow">Reservering bevestigd</div><h3>Tot snel bij Baitan.</h3><p id="confirmationText"></p></div></div>
 </div></div></div></section>'''
 
-
 def treatments_section(site, treatments):
     cards=[]
-    booking_url=str(site.get('booking',{}).get('salonizedBookingUrl') or '#boeken')
-    external=' target="_blank" rel="noopener"' if booking_url.startswith('http') else ''
+    booking_url=booking_href(site)
+    external=booking_attrs(site)
     for t in active_treatments(treatments):
         ds=t.get('durations') or []
         meta=''.join(f'<span>{int(d["minutes"])} min · {money(d["price"])}</span>' for d in ds)
@@ -95,8 +153,8 @@ def massage_choice_section(site):
 
 
 def prices_section(site, treatments):
-    booking_url=str(site.get('booking',{}).get('salonizedBookingUrl') or '#boeken')
-    external=' target="_blank" rel="noopener"' if booking_url.startswith('http') else ''
+    booking_url=booking_href(site)
+    external=booking_attrs(site)
     rows=[]
     for t in active_treatments(treatments):
         options=[]
@@ -157,11 +215,12 @@ def faq_section(site):
 
 def contact_section(site):
     c=site['contact']; o=site['opening']
-    return f'''<section class="section" id="contact"><div class="container contact-grid"><div class="contact-details"><div class="eyebrow">{esc(c.get('kicker'))}</div><h2>{esc(site.get('businessName'))}</h2><div class="detail-row"><span class="detail-label">Adres</span><div class="detail-value">{esc(site.get('addressLine1'))}<br>{esc(site.get('postalCity'))}</div></div><div class="detail-row"><span class="detail-label">Telefoon</span><div class="detail-value"><a href="tel:{esc(site.get('phoneHref'))}">{esc(site.get('phoneDisplay'))}</a></div></div><div class="detail-row"><span class="detail-label">E-mail</span><div class="detail-value"><a href="mailto:{esc(site.get('email'))}">{esc(site.get('email'))}</a></div></div><table class="hours" aria-label="Openingstijden"><tbody><tr><td>{esc(o.get('weekdayLabel'))}</td><td>{esc(o.get('weekdayOpen'))} — {esc(o.get('weekdayClose'))}</td></tr><tr><td>{esc(o.get('weekendLabel'))}</td><td>{esc(o.get('weekendOpen'))} — {esc(o.get('weekendClose'))}</td></tr></tbody></table><div class="contact-actions"><a class="btn" href="{esc(c.get('routeUrl'))}" target="_blank" rel="noopener">Route naar Baitan</a><a class="btn btn-outline" href="#boeken">Afspraak maken</a></div></div><div class="map-consent" data-map-url="{esc(c.get('mapEmbedUrl'))}"><div class="map-consent-inner"><div class="eyebrow">Google Maps</div><h3>Bekijk Baitan op de kaart</h3><p>De interactieve kaart wordt pas geladen nadat je hiervoor kiest.</p><button class="btn btn-outline load-map" type="button">Kaart laden</button></div></div></div></section>'''
+    book_href=booking_href(site); book_attrs=booking_attrs(site)
+    return f'''<section class="section" id="contact"><div class="container contact-grid"><div class="contact-details"><div class="eyebrow">{esc(c.get('kicker'))}</div><h2>{esc(site.get('businessName'))}</h2><div class="detail-row"><span class="detail-label">Adres</span><div class="detail-value">{esc(site.get('addressLine1'))}<br>{esc(site.get('postalCity'))}</div></div><div class="detail-row"><span class="detail-label">Telefoon</span><div class="detail-value"><a href="tel:{esc(site.get('phoneHref'))}">{esc(site.get('phoneDisplay'))}</a></div></div><div class="detail-row"><span class="detail-label">E-mail</span><div class="detail-value"><a href="mailto:{esc(site.get('email'))}">{esc(site.get('email'))}</a></div></div><table class="hours" aria-label="Openingstijden"><tbody><tr><td>{esc(o.get('weekdayLabel'))}</td><td>{esc(o.get('weekdayOpen'))} — {esc(o.get('weekdayClose'))}</td></tr><tr><td>{esc(o.get('weekendLabel'))}</td><td>{esc(o.get('weekendOpen'))} — {esc(o.get('weekendClose'))}</td></tr></tbody></table><div class="contact-actions"><a class="btn" href="{esc(c.get('routeUrl'))}" target="_blank" rel="noopener">Route naar Baitan</a><a class="btn btn-outline" href="{esc(book_href)}"{book_attrs}>Afspraak maken</a></div></div><div class="map-consent" data-map-url="{esc(c.get('mapEmbedUrl'))}"><div class="map-consent-inner"><div class="eyebrow">Google Maps</div><h3>Bekijk Baitan op de kaart</h3><p>De interactieve kaart wordt pas geladen nadat je hiervoor kiest.</p><button class="btn btn-outline load-map" type="button">Kaart laden</button></div></div></div></section>'''
 
 def footer(site):
-    return f'''<footer class="footer"><div class="container"><div class="footer-grid"><div><a class="brand" href="/"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a><p style="max-width:330px;margin-top:20px">{esc(site.get('tagline'))}</p></div><div><h4>Navigatie</h4><div class="footer-links"><a href="/massages">Massages</a><a href="/prijzen">Prijzen</a><a href="/#massagekeuze">Massagekeuze</a><a href="/#boeken">Boeken</a></div></div><div><h4>Contact</h4><div class="footer-links"><a href="tel:{esc(site.get('phoneHref'))}">{esc(site.get('phoneDisplay'))}</a><a href="mailto:{esc(site.get('email'))}">{esc(site.get('email'))}</a><span>{esc(site.get('addressLine1'))}</span><span>{esc(site.get('postalCity'))}</span></div></div><div><h4>Informatie</h4><div class="footer-links"><button class="footer-link-button" type="button" data-legal-modal="terms">Algemene voorwaarden</button><button class="footer-link-button" type="button" data-legal-modal="privacy">Privacy &amp; cookies</button><button class="footer-link-button" type="button" data-legal-modal="cancel">Annuleren &amp; afspraken</button><button class="footer-link-button" type="button" data-legal-modal="business">Bedrijfsgegevens</button></div></div></div><div class="footer-bottom"><span>© {esc(site.get('businessName'))}</span><span>KVK {esc(site.get('kvk'))} · BTW {esc(site.get('btw'))}</span></div></div></footer><dialog class="site-dialog legal-dialog" id="legalDialog" aria-labelledby="legalDialogTitle"><button class="dialog-close" type="button" data-dialog-close aria-label="Sluiten">×</button><div class="dialog-content"><div class="eyebrow">Baitan</div><h2 id="legalDialogTitle"></h2><div id="legalDialogBody"></div><a class="text-link" id="legalDialogLink" href="/voorwaarden">Lees volledige informatie <span>→</span></a></div></dialog>'''
-
+    book_href=booking_href(site); book_attrs=booking_attrs(site)
+    return f'''<footer class="footer"><div class="container"><div class="footer-grid"><div><a class="brand" href="/"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a><p style="max-width:330px;margin-top:20px">{esc(site.get('tagline'))}</p></div><div><h4>Navigatie</h4><div class="footer-links"><a href="/massages">Massages</a><a href="/prijzen">Prijzen</a><a href="/#massagekeuze">Massagekeuze</a><a href="{esc(book_href)}"{book_attrs}>Boeken</a></div></div><div><h4>Contact</h4><div class="footer-links"><a href="tel:{esc(site.get('phoneHref'))}">{esc(site.get('phoneDisplay'))}</a><a href="mailto:{esc(site.get('email'))}">{esc(site.get('email'))}</a><span>{esc(site.get('addressLine1'))}</span><span>{esc(site.get('postalCity'))}</span></div></div><div><h4>Informatie</h4><div class="footer-links"><button class="footer-link-button" type="button" data-legal-modal="terms">Algemene voorwaarden</button><button class="footer-link-button" type="button" data-legal-modal="privacy">Privacy &amp; cookies</button><button class="footer-link-button" type="button" data-legal-modal="cancel">Annuleren &amp; afspraken</button><button class="footer-link-button" type="button" data-legal-modal="business">Bedrijfsgegevens</button></div></div></div><div class="footer-bottom"><span>© {esc(site.get('businessName'))}</span><span>KVK {esc(site.get('kvk'))} · BTW {esc(site.get('btw'))}</span></div></div></footer><dialog class="site-dialog legal-dialog" id="legalDialog" aria-labelledby="legalDialogTitle"><button class="dialog-close" type="button" data-dialog-close aria-label="Sluiten">×</button><div class="dialog-content"><div class="eyebrow">Baitan</div><h2 id="legalDialogTitle"></h2><div id="legalDialogBody"></div><a class="text-link" id="legalDialogLink" href="/voorwaarden">Lees volledige informatie <span>→</span></a></div></dialog>'''
 
 def schema(site, treatments):
     o=site['opening']
@@ -238,8 +297,9 @@ def subpage_head(site, title, description, canonical, breadcrumbs=None, noindex=
     extra=extra_schema or ''
     return f"""<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description)}"><meta name="robots" content="{robots_value}"><meta name="theme-color" content="#3f4932"><link rel="canonical" href="{esc(canonical)}"><link rel="alternate" hreflang="nl-NL" href="{esc(canonical)}"><link rel="alternate" hreflang="x-default" href="{esc(canonical)}"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(description)}"><meta property="og:type" content="website"><meta property="og:url" content="{esc(canonical)}"><meta property="og:site_name" content="Baitan Thai Massage"><meta property="og:locale" content="nl_NL"><meta property="og:image" content="{image}"><meta property="og:image:alt" content="{image_alt}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(description)}"><meta name="twitter:image" content="{image}"><meta name="twitter:image:alt" content="{image_alt}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">{breadcrumb_schema}{extra}</head><body>"""
 
-def subpage_header():
-    return """<a class="skip-link" href="#main">Ga naar inhoud</a><header class="header"><div class="container nav"><a class="brand" href="/" aria-label="Baitan home"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a><nav class="nav-links" aria-label="Hoofdnavigatie"><a class="nav-link" href="/massages">Behandelingen</a><a class="nav-link" href="/#massagekeuze">Massagekeuze</a><a class="nav-link" href="/prijzen">Prijzen</a><a class="nav-link" href="/#reviews">Reviews</a><a class="nav-link" href="/contact">Contact</a></nav><div class="nav-actions"><a class="btn" href="/#boeken">Afspraak maken</a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></div></div></header>"""
+def subpage_header(site):
+    book_href=booking_href(site); book_attrs=booking_attrs(site)
+    return f"""<a class="skip-link" href="#main">Ga naar inhoud</a><header class="header"><div class="container nav"><a class="brand" href="/" aria-label="Baitan home"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a><nav class="nav-links" aria-label="Hoofdnavigatie"><a class="nav-link" href="/massages">Behandelingen</a><a class="nav-link" href="/#massagekeuze">Massagekeuze</a><a class="nav-link" href="/prijzen">Prijzen</a><a class="nav-link" href="/#reviews">Reviews</a><a class="nav-link" href="/contact">Contact</a></nav><div class="nav-actions"><a class="btn" href="{esc(book_href)}"{book_attrs}>Afspraak maken</a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></div></div></header>"""
 
 def treatment_page(site, treatment, treatments):
     base=str(site['seo']['canonical']).rstrip('/')
@@ -256,15 +316,15 @@ def treatment_page(site, treatment, treatments):
     title=treatment.get('seoTitle') or (str(treatment.get('name'))+' | Baitan')
     description=treatment.get('seoDescription') or treatment.get('description') or ''
     breadcrumbs=[("Home",base+"/"),("Massages",base+"/massages"),(treatment.get('name'),canonical)]
-    booking_url=str(site.get('booking',{}).get('salonizedBookingUrl') or '/#boeken')
-    external=' target="_blank" rel="noopener"' if booking_url.startswith('http') else ''
+    booking_url=booking_href(site)
+    external=booking_attrs(site)
     image=treatment.get('image') or site.get('hero',{}).get('image')
     label=treatment.get('imageLabel') or ''
     label_html=f'<span class="media-label">{esc(label)}</span>' if label else ''
     body=f"""<main id="main"><section class="detail-hero"><div class="container detail-hero-grid"><div><div class="eyebrow">Baitan · Capelle aan den IJssel</div><h1>{esc(treatment.get('name'))} in Capelle aan den IJssel</h1><p>{esc(treatment.get('description'))}</p><div class="hero-actions"><a class="btn" href="{esc(booking_url)}"{external}>Afspraak maken</a><a class="btn btn-outline" href="/massages">Alle massages</a></div></div><figure class="detail-hero-photo"><img src="{esc(image)}" alt="{esc(treatment.get('imageAlt') or treatment.get('name'))}">{label_html}</figure></div></section><section class="section"><div class="container detail-layout"><article class="detail-copy"><div class="eyebrow">Over de behandeling</div><h2>{esc(treatment.get('name'))}</h2><p>{esc(treatment.get('detailText') or treatment.get('description'))}</p><ul class="feature-list">{feature_items}</ul></article><aside class="detail-price"><div class="eyebrow">Duur &amp; prijs</div><div class="price-list">{''.join(rows)}</div><a class="btn booking-submit" href="{esc(booking_url)}"{external}>Afspraak maken</a></aside></div></section><section class="section section-soft"><div class="container"><div class="section-head"><div><div class="eyebrow">Andere behandelingen</div><h2>Bekijk ook</h2></div></div><div class="related-grid">{''.join(related)}</div></div></section></main>"""
     service_offers=[{"@type":"Offer","price":str(d.get("price")),"priceCurrency":"EUR","url":canonical} for d in treatment.get("durations",[])]
     service_schema='<script type="application/ld+json">'+json.dumps({"@context":"https://schema.org","@type":"Service","@id":canonical+"#service","name":treatment.get("name"),"description":treatment.get("detailText") or treatment.get("description"),"url":canonical,"image":image,"provider":{"@type":"HealthAndBeautyBusiness","@id":base+"/#business","name":site.get("businessName"),"url":base+"/","telephone":site.get("phoneHref"),"address":{"@type":"PostalAddress","streetAddress":site.get("addressLine1"),"postalCode":"2904 EP","addressLocality":"Capelle aan den IJssel","addressCountry":"NL"}},"areaServed":{"@type":"City","name":"Capelle aan den IJssel"},"offers":service_offers},ensure_ascii=False,separators=(',',':'))+'</script>'
-    return subpage_head(site,title,description,canonical,breadcrumbs,extra_schema=service_schema)+subpage_header()+body+footer(site)+'<script>window.BAITAN_SITE='+json.dumps(site,ensure_ascii=False).replace('</','<\\/')+';window.BAITAN_TREATMENTS='+json.dumps(active_treatments(treatments),ensure_ascii=False).replace('</','<\\/')+';</script><script src="/app.js"></script></body></html>'
+    return subpage_head(site,title,description,canonical,breadcrumbs,extra_schema=service_schema)+subpage_header(site)+body+footer(site)+'<script>window.BAITAN_SITE='+json.dumps(site,ensure_ascii=False).replace('</','<\\/')+';window.BAITAN_TREATMENTS='+json.dumps(active_treatments(treatments),ensure_ascii=False).replace('</','<\\/')+';</script><script src="/app.js"></script></body></html>'
 
 def massages_page(site, treatments):
     base=str(site['seo']['canonical']).rstrip('/')
@@ -278,13 +338,13 @@ def massages_page(site, treatments):
         label_html=f'<span class="media-label">{esc(label)}</span>' if label else ''
         cards.append(f'<a class="seo-card seo-card-visual" href="/{esc(t.get("slug"))}"><div class="seo-card-media"><img src="{esc(image)}" alt="{esc(t.get("imageAlt") or t.get("name"))}" loading="lazy">{label_html}</div><div class="seo-card-copy"><div class="eyebrow">Vanaf {money(start)}</div><h2>{esc(t.get("name"))}</h2><p>{esc(t.get("description"))}</p><span>Bekijk behandeling →</span></div></a>')
     body='<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">Baitan Thai Massage</div><h1>Massages in Capelle aan den IJssel</h1><p>Bekijk het actuele massageaanbod van Baitan met duur en prijzen.</p></div></section><section class="section"><div class="container seo-card-grid">'+''.join(cards)+'</div></section></main>'
-    return subpage_head(site,'Massages in Capelle aan den IJssel | Baitan','Bekijk Thaise massage, aromatherapie, sportmassage, hot stone en duo-massage bij Baitan in Capelle aan den IJssel.',canonical,[("Home",base+"/"),("Massages",canonical)])+subpage_header()+body+footer(site)+'<script>window.BAITAN_SITE='+json.dumps(site,ensure_ascii=False).replace('</','<\\/')+';window.BAITAN_TREATMENTS='+json.dumps(active_treatments(treatments),ensure_ascii=False).replace('</','<\\/')+';</script><script src="/app.js"></script></body></html>'
+    return subpage_head(site,'Massages in Capelle aan den IJssel | Baitan','Bekijk Thaise massage, aromatherapie, sportmassage, hot stone en duo-massage bij Baitan in Capelle aan den IJssel.',canonical,[("Home",base+"/"),("Massages",canonical)])+subpage_header(site)+body+footer(site)+'<script>window.BAITAN_SITE='+json.dumps(site,ensure_ascii=False).replace('</','<\\/')+';window.BAITAN_TREATMENTS='+json.dumps(active_treatments(treatments),ensure_ascii=False).replace('</','<\\/')+';</script><script src="/app.js"></script></body></html>'
 
 def prices_page(site, treatments):
     base=str(site['seo']['canonical']).rstrip('/')
     canonical=base+'/prijzen'
-    booking_url=str(site.get('booking',{}).get('salonizedBookingUrl') or '/#boeken')
-    external=' target="_blank" rel="noopener"' if booking_url.startswith('http') else ''
+    booking_url=booking_href(site)
+    external=booking_attrs(site)
     rows=[]
     for t in active_treatments(treatments):
         options=[]
@@ -294,18 +354,18 @@ def prices_page(site, treatments):
             options.append(f'<a class="price-option" href="{esc(booking_url)}"{external} aria-label="Boek {esc(t.get("name"))}, {minutes} minuten voor {price} in de online agenda"><span class="price-duration">{minutes} min</span><strong>{price}</strong></a>')
         rows.append(f'<div class="price-treatment"><div class="price-treatment-head"><h2><a href="/{esc(t.get("slug"))}">{esc(t.get("name"))}</a></h2><a class="price-book-link" href="{esc(booking_url)}"{external}>Kies tijd &amp; boek <span aria-hidden="true">→</span></a></div><div class="price-options">{"" .join(options)}</div></div>')
     body=f'''<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">Baitan Thai Massage</div><h1>Massageprijzen in Capelle aan den IJssel</h1><p>Bekijk in één oogopslag de duur en prijs per massage. Tik op een prijs om direct via Salonized te reserveren.</p></div></section><section class="section"><div class="container"><div class="price-list price-list-clear">{''.join(rows)}</div><div class="hero-actions"><a class="btn" href="{esc(booking_url)}"{external}>Afspraak maken</a><a class="btn btn-outline" href="/massages">Bekijk behandelingen</a></div></div></section></main>'''
-    return subpage_head(site,'Massage Prijzen Capelle aan den IJssel | Baitan','Bekijk de actuele prijzen van Baitan Thai Massage in Capelle aan den IJssel voor 60, 90 en 120 minuten.',canonical,[("Home",base+"/"),("Prijzen",canonical)])+subpage_header()+body+footer(site)+'<script src="/app.js"></script></body></html>'
+    return subpage_head(site,'Massage Prijzen Capelle aan den IJssel | Baitan','Bekijk de actuele prijzen van Baitan Thai Massage in Capelle aan den IJssel voor 60, 90 en 120 minuten.',canonical,[("Home",base+"/"),("Prijzen",canonical)])+subpage_header(site)+body+footer(site)+'<script src="/app.js"></script></body></html>'
 
 def contact_page(site):
     base=str(site['seo']['canonical']).rstrip('/')
     canonical=base+'/contact'
     body='<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">Contact & route</div><h1>Baitan Thai Massage in Capelle aan den IJssel</h1><p>Hollandsch Diep 71–73, 2904 EP Capelle aan den IJssel.</p></div></section>'+contact_section(site)+'</main>'
-    return subpage_head(site,'Contact Baitan Thai Massage | Capelle aan den IJssel','Contact, openingstijden, route en adres van Baitan Thai Massage aan het Hollandsch Diep in Capelle aan den IJssel.',canonical,[("Home",base+"/"),("Contact",canonical)])+subpage_header()+body+footer(site)+'<script src="/app.js"></script></body></html>'
+    return subpage_head(site,'Contact Baitan Thai Massage | Capelle aan den IJssel','Contact, openingstijden, route en adres van Baitan Thai Massage aan het Hollandsch Diep in Capelle aan den IJssel.',canonical,[("Home",base+"/"),("Contact",canonical)])+subpage_header(site)+body+footer(site)+'<script src="/app.js"></script></body></html>'
 
 def not_found_page(site):
     base=str(site['seo']['canonical']).rstrip('/')
     body='''<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">404</div><h1>Pagina niet gevonden</h1><p>Ga terug naar Baitan of bekijk de massages en prijzen.</p><div class="hero-actions"><a class="btn" href="/">Home</a><a class="btn btn-outline" href="/massages">Massages</a></div></div></section></main>'''
-    return subpage_head(site,'Pagina niet gevonden | Baitan','Deze pagina bestaat niet of is verplaatst.',base+'/404',noindex=True)+subpage_header()+body+footer(site)+'</body></html>'
+    return subpage_head(site,'Pagina niet gevonden | Baitan','Deze pagina bestaat niet of is verplaatst.',base+'/404',noindex=True)+subpage_header(site)+body+footer(site)+'</body></html>'
 
 def build():
     site=load_json('data/site.json')
@@ -314,6 +374,7 @@ def build():
     replacements={
       'SEO_TITLE':esc(site['seo']['title']),
       'SEO_DESCRIPTION':esc(site['seo']['description']),
+      'SEARCH_CONSOLE_META':search_console_meta(site),
       'OG_TITLE':esc(site['seo']['ogTitle']),
       'OG_DESCRIPTION':esc(site['seo']['ogDescription']),
       'OG_IMAGE':esc(site['seo'].get('ogImage') or site.get('hero',{}).get('image')),
@@ -335,6 +396,10 @@ def build():
       'FAQ':faq_section(site),
       'CONTACT':contact_section(site),
       'FOOTER':footer(site),
+      'BOOKING_HREF':esc(booking_href(site)),
+      'BOOKING_ATTRS':booking_attrs(site),
+      'SALONIZED_WIDGET':salonized_widget(site),
+      'WHATSAPP_FLOAT':whatsapp_float(site),
       'DATA_SCRIPT':'<script>window.BAITAN_SITE='+json.dumps(site,ensure_ascii=False).replace('</','<\\/')+';window.BAITAN_TREATMENTS='+json.dumps(active_treatments(treatments),ensure_ascii=False).replace('</','<\\/')+';</script>'
     }
     for key,value in replacements.items():
