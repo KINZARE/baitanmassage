@@ -10,9 +10,9 @@
   "kvk": "84338245",
   "btw": "NL003949907B52",
   "hero": {
-    "eyebrow": "Thai Massage & Wellness · Capelle aan den IJssel",
-    "title": "Thaise massage in Capelle aan den IJssel",
-    "text": "Authentieke Thaise massage, aromatherapie, sportmassage, hot stone en duo-massage bij Baitan.",
+    "eyebrow": "Baitan Thai Massage · Capelle aan den IJssel",
+    "title": "Thaise massage in Capelle, met aandacht voor jou.",
+    "text": "Ontspan met Thaise massage, aromatherapie, sportmassage, hot stone of duo-massage aan het Hollandsch Diep.",
     "primaryButton": "Afspraak maken",
     "secondaryButton": "Vind mijn massage",
     "image": "/assets/images/baitan-hero-atmospheric.webp",
@@ -26,33 +26,33 @@
   "booking": {
     "kicker": "Online boeken",
     "title": "Boek je massage",
-    "text": "Online reserveren verloopt via Salonized.",
-    "panelTitle": "Boek je afspraak via Salonized.",
+    "text": "Bekijk de actuele beschikbaarheid en reserveer direct in de online agenda.",
+    "panelTitle": "Kies je behandeling en een moment dat bij je past.",
     "apiBase": "",
     "provider": "salonized",
     "image": "/assets/images/thai-oil-massage.webp",
     "imageAlt": "Sfeerbeeld van een professionele oliemassage bij Baitan",
     "imageLabel": "Sfeerbeeld",
-    "salonizedBookingUrl": ""
+    "salonizedBookingUrl": "https://baitan-thai-massage.salonized.com/services"
   },
   "about": {
     "kicker": "Over Baitan",
-    "title": "Thaise wellness in Capelle",
-    "text": "Baitan biedt ontspannings- en wellnessmassages aan het Hollandsch Diep in Capelle aan den IJssel.",
+    "title": "Een rustig moment voor jezelf.",
+    "text": "Baitan is een Thaise massagesalon aan het Hollandsch Diep in Capelle aan den IJssel. Kies de behandeling en duur die bij je past en reserveer eenvoudig online.",
     "image": "/assets/images/thai-shoulder-massage.webp",
     "imageAlt": "Sfeerbeeld van een rustige schoudermassage",
     "facts": [
       "Douchen mogelijk",
       "Pin & contant",
       "Gratis parkeren",
-      "Wellnessmassage"
+      "Geen erotische behandelingen"
     ],
     "imageLabel": "Sfeerbeeld"
   },
   "giftCard": {
     "enabled": true,
     "title": "Cadeaubon",
-    "text": "Verkrijgbaar in de salon en 12 maanden geldig, tenzij anders vermeld.",
+    "text": "Verkrijgbaar in de salon. Kom langs of stuur Baitan een WhatsApp-bericht.",
     "button": "Bel voor een cadeaubon",
     "image": "/assets/images/thai-hand-massage.webp",
     "imageAlt": "Sfeerbeeld van ontspanning en wellness"
@@ -60,12 +60,12 @@
   "loyalty": {
     "enabled": true,
     "title": "Spaarkaart",
-    "text": "1 stempel per 60 minuten. Bij 10 stempels ontvang je 60 minuten massage naar keuze.",
+    "text": "Je ontvangt een spaarkaart. Per 60 minuten krijg je 1 stempel; bij 10 stempels ontvang je 60 minuten massage naar keuze.",
     "button": "Contact"
   },
   "reviews": {
-    "rating": 4.8,
-    "count": 113,
+    "rating": 4.9,
+    "count": 101,
     "button": "Bekijk reviews",
     "url": "https://www.google.com/maps/search/?api=1&query=Baitan+Thai+Massage+Hollandsch+Diep+71+Capelle+aan+den+IJssel",
     "writeUrl": "https://search.google.com/local/writereview?placeid=ChIJq_OXztzTxUcRKp8nM5EFAqw"
