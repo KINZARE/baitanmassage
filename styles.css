@@ -988,23 +988,3 @@ main{min-width:0}
     padding-bottom:calc(30px + env(safe-area-inset-bottom));
   }
 }
-
-
-/* high quality image rendering */
-.hero-bg,
-.treatment-media img,
-.booking-visual img,
-.about-photo img,
-.gallery-item img,
-.gift-visual img,
-.dialog-media img,
-.detail-hero-photo img,
-.seo-card-media img{
-  image-rendering:auto;
-  -webkit-transform:translateZ(0);
-  backface-visibility:hidden;
-}
-.treatment-media img,
-.dialog-media img{
-  object-position:center center;
-}
