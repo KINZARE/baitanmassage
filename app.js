@@ -25,7 +25,7 @@ function initBaitanInteractionLayer() {
 
   const revealNodes = [...document.querySelectorAll(revealSelectors.join(','))];
   revealNodes.forEach((node, index) => {
-    node.dataset.reveal = '';
+    node.setAttribute('data-reveal', '');
     node.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 55}ms`);
   });
 
