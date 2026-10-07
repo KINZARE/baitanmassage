@@ -1048,6 +1048,7 @@ html.has-salonized-widget .whatsapp-float{bottom:88px}
 .choice-card .choice-option:hover{transform:none}
 .choice-card .choice-option{border-radius:6px}
 .choice-question legend{line-height:1.3}
+.text-button{background:none;border:0;padding:10px 0;color:var(--olive-dark);font:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
 .choice-back,.choice-restart{min-height:44px;margin-top:18px}
 .price-option{border-radius:6px}
 .booking-concise{background:var(--olive-dark);color:var(--paper)}
