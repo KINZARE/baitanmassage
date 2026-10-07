@@ -23,6 +23,11 @@ class VisualContractTests(unittest.TestCase):
         self.assertRegex(CSS, r"scale\(1\.0[12]\)")
         self.assertNotIn("scroll-jacking", JS.lower())
 
+    def test_hero_is_larger_but_remains_responsive(self):
+        self.assertIn("--hero-min-height: clamp(720px, 82vh, 900px);", CSS)
+        self.assertRegex(CSS, r"\.hero,\s*\.hero-photo\s*\{[^}]*min-height:\s*var\(--hero-min-height\)")
+        self.assertRegex(CSS, r"@media \(max-width: 600px\)[\s\S]*?\.hero-photo\s*\{[^}]*height:\s*340px")
+
 
 if __name__ == "__main__":
     unittest.main()

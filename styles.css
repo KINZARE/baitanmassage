@@ -6,6 +6,7 @@
   --paper: #ffffff;
   --white: #ffffff;
   --color-text-inverse: #ffffff;
+  --hero-min-height: clamp(720px, 82vh, 900px);
 }
 
 body,
@@ -22,6 +23,19 @@ select,
 .slot,
 .whatsapp-float {
   background-color: var(--paper);
+}
+
+.hero,
+.hero-photo {
+  min-height: var(--hero-min-height);
+}
+
+.hero-copy {
+  padding-block: clamp(76px, 9vh, 112px);
+}
+
+.hero-copy h1 {
+  font-size: clamp(3.35rem, 5.5vw, 5.15rem);
 }
 
 .header {
@@ -122,9 +136,41 @@ select,
   }
 }
 
+@media (max-width: 800px) {
+  .hero,
+  .hero-photo {
+    min-height: 640px;
+  }
+
+  .hero-copy {
+    padding-block: 60px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(3rem, 8vw, 4rem);
+  }
+}
+
 @media (max-width: 600px) {
   .header {
     backdrop-filter: blur(8px);
+  }
+
+  .hero {
+    min-height: 0;
+  }
+
+  .hero-copy {
+    padding-block: 48px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.8rem, 12vw, 3.65rem);
+  }
+
+  .hero-photo {
+    min-height: 0;
+    height: 340px;
   }
 
   .js-motion [data-reveal] {
