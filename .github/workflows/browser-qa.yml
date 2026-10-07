@@ -1,0 +1,38 @@
+name: Browser QA
+
+on:
+  pull_request:
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build static site
+        run: python3 build.py
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Run desktop and mobile browser QA
+        run: |
+          python3 -m http.server 4173 --directory dist >/tmp/baitan-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          E2E_URL=http://127.0.0.1:4173 QA_OUT_DIR=qa-out node tests/browser_qa.mjs
+          kill $SERVER_PID 2>/dev/null || true
+          trap - EXIT
+      - name: Upload browser QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: baitan-browser-qa
+          path: qa-out/
+          if-no-files-found: error
+          retention-days: 3
