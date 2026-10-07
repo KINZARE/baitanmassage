@@ -48,6 +48,7 @@ class VisualContractTests(unittest.TestCase):
     def test_touch_reveal_wins_before_legacy_treatment_modal(self):
         self.assertIn('stopImmediatePropagation', JS)
         self.assertRegex(JS, r"mediaLink\.addEventListener\('click',[\s\S]*?capture:\s*true")
+        self.assertIn('navigator.maxTouchPoints', JS)
 
     def test_menu_interaction_is_keyboard_accessible(self):
         self.assertIn('initMenuOverlay', JS)
