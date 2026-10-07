@@ -97,7 +97,7 @@ select,
 }
 
 .header {
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--paper);
   transition:
     border-color 180ms ease,
     box-shadow 220ms var(--ease-out),
