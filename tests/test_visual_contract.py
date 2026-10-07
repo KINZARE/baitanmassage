@@ -45,6 +45,10 @@ class VisualContractTests(unittest.TestCase):
         self.assertIn('aria-expanded', JS)
         self.assertIn('.treatment-visual.is-expanded', CSS)
 
+    def test_touch_reveal_wins_before_legacy_treatment_modal(self):
+        self.assertIn('stopImmediatePropagation', JS)
+        self.assertRegex(JS, r"mediaLink\.addEventListener\('click',[\s\S]*?capture:\s*true")
+
     def test_menu_interaction_is_keyboard_accessible(self):
         self.assertIn('initMenuOverlay', JS)
         self.assertIn('Escape', JS)
