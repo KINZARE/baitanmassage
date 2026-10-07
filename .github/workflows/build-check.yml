@@ -45,8 +45,10 @@ jobs:
           test -f dist/index.html
           test -f dist/sitemap.xml
           test -f dist/robots.txt
-          grep -q "hero-immersive" dist/index.html
+          grep -q 'class="hero"' dist/index.html
           grep -q 'class="brand" href="/"' dist/index.html
+          test -f dist/assets/styles-base.css
+          test -f dist/assets/app-base.js
           test -f dist/assets/images/thai-head-massage.webp
           test -f dist/assets/images/hot-stone-massage.webp
           test -f dist/assets/images/thai-leg-massage.webp
