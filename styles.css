@@ -3,26 +3,84 @@
 /* White editorial interaction layer. Keeps the proven base stylesheet intact. */
 :root {
   --color-bg-primary: #ffffff;
+  --color-surface-secondary: #ffffff;
+  --color-surface-muted: #ffffff;
   --paper: #ffffff;
   --white: #ffffff;
   --color-text-inverse: #ffffff;
   --hero-min-height: clamp(720px, 82vh, 900px);
 }
 
+/* Every persistent page surface is white. Accent colors remain reserved for controls, borders and imagery. */
+html,
 body,
+main,
 .hero,
 .header,
 .nav-links.open,
+.section-soft,
+.section-dark,
+.choice-section,
 .choice-card,
+.gallery-section,
+.booking-concise,
+.booking-shell,
+.booking-copy,
+.detail-hero,
+.legal-hero,
+.detail-price,
+.map-consent,
+.map,
 .site-dialog,
 .dialog-close,
-.booking-shell,
 select,
 .booking-input,
 .duration-option,
 .slot,
 .whatsapp-float {
   background-color: var(--paper);
+}
+
+.section-dark,
+.booking-concise,
+.booking-copy,
+.footer {
+  color: var(--ink);
+}
+
+.section-dark p,
+.booking-concise p,
+.booking-copy p,
+.footer p,
+.footer-links,
+.footer-bottom {
+  color: var(--muted);
+}
+
+.booking-concise h2,
+.footer h4,
+.footer .brand-mark span {
+  color: var(--ink);
+}
+
+.footer {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.gift-block .btn {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.footer :focus-visible,
+.section-dark :focus-visible,
+.booking-concise :focus-visible {
+  outline-color: var(--color-focus);
+}
+
+::selection {
+  background: rgba(181, 111, 76, 0.18);
 }
 
 .hero,
