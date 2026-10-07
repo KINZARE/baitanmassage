@@ -90,9 +90,10 @@ function initTreatmentReveals() {
       mediaLink.addEventListener('click', event => {
         if (!coarsePointer.matches || card.classList.contains('is-expanded')) return;
         event.preventDefault();
+        event.stopImmediatePropagation();
         collapseOthers(card);
         setExpanded(card, true);
-      });
+      }, { capture: true });
     }
 
     card.addEventListener('click', event => {
