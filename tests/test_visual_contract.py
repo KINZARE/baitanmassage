@@ -25,7 +25,7 @@ class VisualContractTests(unittest.TestCase):
 
     def test_hero_is_larger_but_remains_responsive(self):
         self.assertIn("--hero-min-height: clamp(720px, 82vh, 900px);", CSS)
-        self.assertRegex(CSS, r"\.hero\s*\{[^}]*min-height:\s*var\(--hero-min-height\)")
+        self.assertRegex(CSS, r"\.hero,\s*\.hero-photo\s*\{[^}]*min-height:\s*var\(--hero-min-height\)")
         self.assertRegex(CSS, r"@media \(max-width: 600px\)[\s\S]*?\.hero-photo\s*\{[^}]*height:\s*340px")
 
 
