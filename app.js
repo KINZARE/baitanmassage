@@ -66,32 +66,41 @@ function initTreatmentReveals() {
   if (!cards.length) return;
   const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)');
   const touchCapable = () => coarsePointer.matches || navigator.maxTouchPoints > 0;
-
-  const collapseOthers = active => {
-    cards.forEach(card => {
-      if (card === active) return;
-      card.classList.remove('is-expanded');
-      card.setAttribute('aria-expanded', 'false');
-    });
-  };
+  const supportsPointerEvents = 'PointerEvent' in window;
 
   const setExpanded = (card, expanded) => {
     card.classList.toggle('is-expanded', expanded);
     card.setAttribute('aria-expanded', String(expanded));
+    if (!expanded) delete card.dataset.touchRevealed;
+  };
+
+  const collapseOthers = active => {
+    cards.forEach(card => {
+      if (card === active) return;
+      setExpanded(card, false);
+    });
   };
 
   cards.forEach(card => {
     card.setAttribute('data-treatment-reveal', '');
     card.setAttribute('aria-expanded', 'false');
+    let touchPending = false;
 
     const mediaLink = card.querySelector('.treatment-media[href]');
     if (mediaLink) {
+      mediaLink.addEventListener('pointerdown', event => {
+        touchPending = event.pointerType === 'touch';
+      }, { capture: true });
+
       mediaLink.addEventListener('click', event => {
-        if (!touchCapable() || card.classList.contains('is-expanded')) return;
+        const touchActivation = touchPending || (!supportsPointerEvents && touchCapable());
+        touchPending = false;
+        if (!touchActivation || card.dataset.touchRevealed === 'true') return;
         event.preventDefault();
         event.stopImmediatePropagation();
         collapseOthers(card);
         setExpanded(card, true);
+        card.dataset.touchRevealed = 'true';
       }, { capture: true });
     }
 
@@ -99,9 +108,13 @@ function initTreatmentReveals() {
       if (!touchCapable() || event.target.closest('a, button')) return;
       collapseOthers(card);
       setExpanded(card, !card.classList.contains('is-expanded'));
+      if (card.classList.contains('is-expanded')) card.dataset.touchRevealed = 'true';
     });
 
-    card.addEventListener('focusin', () => setExpanded(card, true));
+    card.addEventListener('focusin', () => {
+      if (touchPending) return;
+      setExpanded(card, true);
+    });
     card.addEventListener('focusout', event => {
       if (!card.contains(event.relatedTarget)) setExpanded(card, false);
     });
