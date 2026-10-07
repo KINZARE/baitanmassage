@@ -11,10 +11,10 @@
   "btw": "NL003949907B52",
   "hero": {
     "eyebrow": "Baitan Thai Massage · Capelle aan den IJssel",
-    "title": "Thaise massage in Capelle, met aandacht voor jou.",
-    "text": "Ontspan met Thaise massage, aromatherapie, sportmassage, hot stone of duo-massage aan het Hollandsch Diep.",
-    "primaryButton": "Afspraak maken",
-    "secondaryButton": "Vind mijn massage",
+    "title": "Tijd voor jezelf.\nWij zorgen voor de rest.",
+    "text": "Authentieke Thaise massage in Capelle aan den IJssel. Kies de behandeling die bij je past, met persoonlijke aandacht voor jou.",
+    "primaryButton": "Boek je massage",
+    "secondaryButton": "Bekijk behandelingen",
     "image": "/assets/images/baitan-hero-atmospheric.webp",
     "imageAlt": "Sfeervolle Thaise massage bij Baitan in Capelle aan den IJssel",
     "badge": "Baitan · Capelle aan den IJssel"
@@ -35,13 +35,13 @@
     "imageLabel": "Sfeerbeeld",
     "salonizedBookingUrl": "https://baitan-thai-massage.salonized.com/services",
     "salonizedCompanyId": "",
-    "salonizedWidgetColor": "#3f4932",
+    "salonizedWidgetColor": "#B56F4C",
     "salonizedWidgetPosition": "left"
   },
   "about": {
     "kicker": "Over Baitan",
-    "title": "Een rustig moment voor jezelf.",
-    "text": "Baitan is een Thaise massagesalon aan het Hollandsch Diep in Capelle aan den IJssel. Kies de behandeling en duur die bij je past en reserveer eenvoudig online.",
+    "title": "Goede massage begint met aandacht.",
+    "text": "Bij Baitan aan het Hollandsch Diep kies je uit Thaise massage, aromatherapie, sportmassage, hot stone of een massage samen. Neem de tijd die bij je past: 60, 90 of 120 minuten.",
     "image": "/assets/images/thai-shoulder-massage.webp",
     "imageAlt": "Sfeerbeeld van een rustige schoudermassage",
     "facts": [
