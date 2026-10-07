@@ -91,7 +91,7 @@ if(bookingForm)bookingForm.addEventListener('submit',async e=>{
 
 document.querySelectorAll('[data-service]').forEach(link=>link.addEventListener('click',()=>{const key=link.dataset.service;if(serviceSelect&&services[key]){serviceSelect.value=key;renderDurations(key);setTimeout(()=>document.querySelector('#boeken')?.scrollIntoView({behavior:'smooth'}),10);}}));
 
-document.querySelectorAll('.faq-question').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.faq-item');const open=item.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));}));
+document.querySelectorAll('.faq-question').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.faq-item');const open=item.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));item.querySelector('.faq-answer').hidden=!open;}));
 const menuToggle=document.querySelector('.menu-toggle');const navLinks=document.querySelector('.nav-links');
 if(menuToggle&&navLinks){navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{navLinks.classList.remove('open');document.body.classList.remove('nav-open');menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Open menu');}));}
 
@@ -145,8 +145,9 @@ if(choiceShell){
   const resultBook=choiceShell.querySelector('#choiceResultBook');
   const resultDetail=choiceShell.querySelector('#choiceResultDetail');
   const restart=choiceShell.querySelector('#choiceRestart');
+  const back=choiceShell.querySelector('#choiceBack');
   let step=0;
-  let scores={thai:0,aroma:0,sport:0,hotstone:0,duo:0};
+  let answers=[];
 
   const messages={
     thai:'Traditionele Thaise technieken met warme, geurloze olie.',
@@ -157,15 +158,25 @@ if(choiceShell){
   };
 
   function treatmentFor(id){return cmsTreatments.find(t=>t.id===id);}
-  function showStep(index){
+  function showStep(index,focus=false){
+    step=index;
+    if(result)result.hidden=true;
     questions.forEach((q,i)=>q.hidden=i!==index);
-    if(progressText)progressText.textContent=`Vraag ${Math.min(index+1,5)} van 5`;
-    if(progressBar)progressBar.style.width=`${Math.min(((index+1)/5)*100,100)}%`;
+    if(back)back.hidden=index===0;
+    if(progressText)progressText.textContent=`Vraag ${index+1} van ${questions.length}`;
+    if(progressBar)progressBar.style.width=`${((index+1)/questions.length)*100}%`;
+    if(focus)questions[index]?.querySelector('legend')?.focus({preventScroll:true});
   }
   function finish(){
     questions.forEach(q=>q.hidden=true);
     if(progressText)progressText.textContent='Je resultaat';
     if(progressBar)progressBar.style.width='100%';
+    if(back)back.hidden=false;
+    const scores={thai:0,aroma:0,sport:0,hotstone:0,duo:0};
+    answers.forEach(score=>{
+      if(score==='neutral')Object.keys(scores).forEach(k=>scores[k]+=0.2);
+      else if(scores[score]!==undefined)scores[score]+=2;
+    });
     const best=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0]?.[0]||'thai';
     const t=treatmentFor(best);
     if(resultTitle)resultTitle.textContent=t?.name||'Thaise massage';
@@ -196,8 +207,9 @@ if(choiceShell){
     if(result){
       result.hidden=false;
       result.setAttribute('tabindex','-1');
+      result.focus({preventScroll:true});
       if(window.matchMedia('(max-width: 720px)').matches){
-        requestAnimationFrame(()=>result.scrollIntoView({behavior:'smooth',block:'nearest'}));
+        requestAnimationFrame(()=>result.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'}));
       }
     }
   }
@@ -205,24 +217,20 @@ if(choiceShell){
     q.querySelectorAll('.choice-option').forEach(btn=>btn.addEventListener('click',()=>{
       q.querySelectorAll('.choice-option').forEach(option=>option.setAttribute('aria-pressed','false'));
       btn.setAttribute('aria-pressed','true');
-      const score=btn.dataset.score;
-      if(score==='neutral'){
-        Object.keys(scores).forEach(k=>scores[k]+=0.2);
-      }else if(scores[score]!==undefined){
-        scores[score]+=2;
-      }
-      if(index===4){finish();}
-      else{step=index+1;showStep(step);}
+      answers[index]=btn.dataset.score;
+      if(index===questions.length-1){step=questions.length;finish();}
+      else{showStep(index+1,true);}
     }));
   });
   restart?.addEventListener('click',()=>{
-    scores={thai:0,aroma:0,sport:0,hotstone:0,duo:0};
+    answers=[];
     step=0;
     if(result)result.hidden=true;
     questions.forEach(q=>q.querySelectorAll('.choice-option').forEach(option=>option.setAttribute('aria-pressed','false')));
     showStep(0);
     questions[0]?.querySelector('.choice-option')?.focus({preventScroll:true});
   });
+  back?.addEventListener('click',()=>showStep(Math.max(0,step-1),true));
   showStep(0);
 }
 
@@ -356,22 +364,7 @@ function syncPolishHeader(){
 syncPolishHeader();
 window.addEventListener('scroll',syncPolishHeader,{passive:true});
 
-const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const revealTargets=[...document.querySelectorAll('main > section')];
-if(reduceMotion || !('IntersectionObserver' in window)){
-  revealTargets.forEach(el=>el.classList.add('is-visible'));
-}else{
-  revealTargets.forEach(el=>el.classList.add('ui-reveal'));
-  const revealObserver=new IntersectionObserver((entries,observer)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  },{rootMargin:'0px 0px -8% 0px',threshold:.08});
-  revealTargets.forEach(el=>revealObserver.observe(el));
-}
+// Keep content visible while scrolling, including with reduced motion enabled.
 
 
 /* Responsive navigation hardening */

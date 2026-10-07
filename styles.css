@@ -1024,3 +1024,73 @@ html.has-salonized-widget .whatsapp-float{bottom:88px}
 @media(prefers-reduced-motion:reduce){
   .whatsapp-float{transition:none}
 }
+
+/* Baitan refinement: quiet surfaces and a shorter path to treatments. */
+.hero.hero-immersive{min-height:0}
+.hero-immersive-inner{min-height:620px;align-items:center;padding-block:76px}
+.hero-immersive .hero-copy{max-width:720px}
+.hero-immersive .hero-copy h1{max-width:720px;font-size:clamp(3.1rem,5.8vw,5.5rem);line-height:1.03;letter-spacing:-.035em}
+.hero-immersive .hero-copy .lead{max-width:550px;line-height:1.65}
+.hero-scroll{bottom:24px}
+.section{padding-block:76px}
+.btn{border-radius:8px;min-height:48px}
+.btn:hover{transform:none}
+.btn:active{transform:scale(.985)}
+.visual-treatments{gap:24px}
+.treatment-visual{border-radius:10px;box-shadow:none;transition:border-color .18s ease}
+.treatment-visual:hover{transform:none;box-shadow:none}
+.treatment-media img{transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.treatment-visual:hover .treatment-media img{transform:scale(1.02)}
+.treatment-visual h3{line-height:1.15}
+.treatment-actions{flex-wrap:wrap;row-gap:4px}
+.treatment-actions .text-link{min-height:44px;display:inline-flex;align-items:center}
+.choice-card{border-radius:10px;box-shadow:none}
+.choice-card .choice-option:hover{transform:none}
+.choice-card .choice-option{border-radius:6px}
+.choice-question legend{line-height:1.3}
+.text-button{background:none;border:0;padding:10px 0;color:var(--olive-dark);font:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.choice-back,.choice-restart{min-height:44px;margin-top:18px}
+.price-option{border-radius:6px}
+.booking-concise{background:var(--olive-dark);color:var(--paper)}
+.booking-concise-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.booking-concise h2{color:var(--paper);font-size:clamp(2.3rem,4vw,3.5rem);margin-bottom:18px}
+.booking-concise p{color:#e0e3d9;max-width:520px}
+.booking-help{margin-top:24px;font-size:.9rem}
+.booking-help a{text-decoration:underline;text-underline-offset:4px;color:var(--paper)}
+.booking-concise .external-booking-panel{padding:0;background:none;display:block}
+.booking-concise .external-booking-panel h3{font-size:1.6rem;color:var(--paper);line-height:1.2}
+.booking-concise .external-booking-panel .eyebrow{display:none}
+.booking-concise .booking-submit{background:var(--paper);color:var(--olive-dark);border-color:var(--paper)}
+.gallery-item,.gift-shell,.map-consent{border-radius:10px}
+.about-photo{position:relative}
+.faq-answer[hidden],[hidden].choice-back{display:none!important}
+.faq-question{min-height:64px}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--olive);outline-offset:4px}
+.hero a:focus-visible,.booking-concise a:focus-visible,.gift-shell a:focus-visible,.footer a:focus-visible{outline-color:var(--paper)}
+.nav-links.open .nav-link{border-radius:6px}
+.mobile-book{border-radius:8px}
+@media(max-width:1050px){
+  .hero-immersive-inner{min-height:580px;padding-block:64px}
+  .booking-concise-inner{gap:36px}
+}
+@media(max-width:720px){
+  .section{padding-block:52px}
+  .hero-immersive-inner{min-height:520px;align-items:center;padding-block:56px}
+  .hero-immersive .hero-copy h1{font-size:clamp(2.65rem,10.3vw,4rem);line-height:1.05}
+  .hero-immersive .hero-shade{background:linear-gradient(90deg,rgba(22,24,19,.78),rgba(22,24,19,.48))}
+  .hero-immersive .hero-actions{display:grid;grid-template-columns:1fr;max-width:340px;gap:10px;margin-top:24px}
+  .hero-immersive .hero-actions .btn{min-height:50px}
+  .treatment-visual{border-radius:8px}
+  .treatment-body{padding:20px}
+  .treatment-topline{display:block}
+  .choice-card{padding:24px 20px}
+  .booking-concise-inner{grid-template-columns:1fr;gap:28px}
+  .booking-concise .external-booking-panel{padding:0}
+  .booking-concise .booking-submit{width:100%}
+  .gallery-item,.gift-shell,.map-consent{border-radius:8px}
+  .nav-links.open{border-radius:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
