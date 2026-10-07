@@ -1061,6 +1061,7 @@ html.has-salonized-widget .whatsapp-float{bottom:88px}
 .booking-concise .external-booking-panel .eyebrow{display:none}
 .booking-concise .booking-submit{background:var(--paper);color:var(--olive-dark);border-color:var(--paper)}
 .gallery-item,.gift-shell,.map-consent{border-radius:10px}
+.about-photo{position:relative}
 .faq-answer[hidden],[hidden].choice-back{display:none!important}
 .faq-question{min-height:64px}
 a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--olive);outline-offset:4px}
