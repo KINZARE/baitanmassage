@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'refine/**'
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Visual contract tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Production build
+        run: npm run build
+      - name: Verify generated assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          required = [
+              Path('dist/index.html'),
+              Path('dist/styles.css'),
+              Path('dist/app.js'),
+              Path('dist/assets/styles-base.css'),
+              Path('dist/assets/app-base.js'),
+          ]
+          missing = [str(path) for path in required if not path.exists()]
+          if missing:
+              raise SystemExit('Missing build output: ' + ', '.join(missing))
+          html = Path('dist/index.html').read_text(encoding='utf-8')
+          if '/styles.css' not in html or '/app.js' not in html:
+              raise SystemExit('Built homepage is missing shared assets')
+          print('Generated assets verified')
+          PY

@@ -1,26 +1,26 @@
-# Modern Baitan — Warm Earth / Editorial Calm
+# Modern Baitan — White Editorial Calm
 
-Approved direction: user's complete brand identity and website restyle prompt, 7 October 2026. Existing business truth and logo remain authoritative.
+Approved direction: user's complete brand identity and website restyle prompt, refined 7 October 2026 with a true white base and restrained interaction. Existing business truth and logo remain authoritative.
 
 ## Tokens
 
 | Semantic token | Value | Purpose |
 | --- | --- | --- |
-| color-bg-primary | #F5EFE6 | Warm Ivory page background |
+| color-bg-primary | #FFFFFF | Primary page background |
 | color-text-primary | #2B211C | Espresso headings, body, footer |
 | color-brand-accent | #B56F4C | Clay primary actions |
 | color-surface-secondary | #D8C4AA | Soft Sand supporting tone |
 | color-text-secondary | #6C5143 | Warm Brown secondary text |
-| color-surface-muted | #EDE3D5 | Quiet section backgrounds |
+| color-surface-muted | #EDE3D5 | Quiet contrast sections |
 | color-border | #C4AE95 | Supporting separators |
 | color-accent-hover | #C17E59 | Primary action hover |
 | color-focus | #805039 | Visible light-surface focus |
 | color-error | #8A332A | Error text and border |
 | color-success | #42573D | Confirmation text and border |
-| color-text-inverse | #F5EFE6 | Text on Espresso |
+| color-text-inverse | #FFFFFF | Text on Espresso |
 | color-text-inverse-muted | #D8C4AA | Secondary text on Espresso |
 
-Clay buttons use a deeper Espresso text token, #190F0A, because both Ivory and the primary Espresso small text on Clay fail AA. Interactive option/input boundaries use #8F725F. Clay remains a limited action accent. Functional input/option borders need contrast; decorative section separators do not represent controls.
+Clay buttons use a deeper Espresso text token, #190F0A, because both the old Ivory and the primary Espresso small text on Clay fail AA. Interactive option/input boundaries use #8F725F. Clay remains a limited action accent. Functional input/option borders need contrast; decorative section separators do not represent controls.
 
 ## Typography and spacing
 
@@ -34,12 +34,14 @@ Clay buttons use a deeper Espresso text token, #190F0A, because both Ivory and t
 
 ## Surface contract: public website
 
-Mode: Persuade. First viewport: an open Ivory text column beside a large unfiltered human treatment photograph. Newsreader headline, one Clay booking action, treatment link, local address. On phones the readable booking proposition precedes the image.
+Mode: Persuade. First viewport: an open white text column beside a large unfiltered human treatment photograph. Newsreader headline, one Clay booking action, treatment link, local address. On phones the readable booking proposition precedes the image.
 
-The recognisable mechanism is editorial rhythm, human close-up photography and Espresso/Clay contrast. Vary open treatment grids, photo/text compositions, restrained price rows and a dark booking close. Content is visible without animation or JavaScript. No carousels, entrance hiding, scroll-jacking, gradients, decorative badges or invented reviews.
+The recognisable mechanism is editorial rhythm, human close-up photography and Espresso/Clay contrast. Vary open treatment grids, photo/text compositions, restrained price rows and a dark booking close. White is the default canvas; muted sand sections are reserved for deliberate contrast. No carousels, scroll-jacking, gradients, decorative badges or invented reviews.
 
 ## Interaction and coverage
 
-Pointer image hover 1.02 scale, 250ms ease-out; primary button press 0.98 scale. Reduced motion disables transitions. Anchor navigation is immediate so it cannot race with the choice helper. Explicit focus, selected and disabled states. Price numerals use tabular figures. Native treatment dialogs and policy dialogs preserve existing behaviour and scroll on small screens.
+Interaction should make the site feel responsive without turning it into a motion showcase. Pointer image hover scales to at most 1.015–1.02; cards may lift up to 4px; primary buttons lift 2px and retain the existing 0.98 press state. Text-link arrows may travel 4px. The sticky header gains only a subtle border/shadow response after scroll.
+
+In-view motion is positional only: content remains visible at all times and settles upward by 8–12px when entering the viewport. Small stagger delays are capped and never block reading. `prefers-reduced-motion: reduce` disables transforms and transitions. Anchor navigation remains immediate so it cannot race with the choice helper. Explicit focus, selected and disabled states remain authoritative. Price numerals use tabular figures. Native treatment dialogs and policy dialogs preserve existing behaviour and scroll on small screens.
 
 Every route uses this shared system, including legal pages, prices, contacts and treatment details. The atmosphere labels identify existing imagery; photo provenance and business data must not be altered to imply real salon interiors.
