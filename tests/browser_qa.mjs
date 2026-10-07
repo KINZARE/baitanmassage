@@ -62,6 +62,7 @@ async function desktopQA(browser) {
 
   const firstCard = page.locator('.treatment-visual').first();
   await firstCard.locator('.treatment-media').hover();
+  await page.waitForTimeout(350);
   const revealOpacity = await firstCard.locator('.treatment-meta').evaluate(el => getComputedStyle(el).opacity);
   invariant(Number(revealOpacity) > 0.9, `desktop treatment metadata did not reveal: ${revealOpacity}`);
 
@@ -108,6 +109,7 @@ async function mobileQA(browser) {
   await media.tap();
   invariant(await firstCard.getAttribute('aria-expanded') === 'true', 'first treatment tap did not reveal card');
   invariant(await page.locator('#treatmentDialog').evaluate(el => !el.open), 'legacy treatment modal opened on first reveal tap');
+  await page.waitForTimeout(450);
 
   const metaBox = await firstCard.locator('.treatment-meta').boundingBox();
   invariant(metaBox && metaBox.height > 0, 'mobile treatment metadata remains collapsed after first tap');
