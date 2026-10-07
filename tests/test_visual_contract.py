@@ -13,6 +13,14 @@ class VisualContractTests(unittest.TestCase):
         self.assertRegex(CSS, r"--color-bg-primary:\s*#fff(?:fff)?\s*;")
         self.assertIn("#FFFFFF", DESIGN.upper())
 
+    def test_all_page_surfaces_are_white(self):
+        self.assertRegex(CSS, r"--color-surface-secondary:\s*#fff(?:fff)?\s*;")
+        self.assertRegex(CSS, r"--color-surface-muted:\s*#fff(?:fff)?\s*;")
+        self.assertRegex(CSS, r"\.section-dark[\s\S]*?background(?:-color)?:\s*var\(--paper\)")
+        self.assertRegex(CSS, r"\.booking-concise[\s\S]*?background(?:-color)?:\s*var\(--paper\)")
+        self.assertRegex(CSS, r"\.footer[\s\S]*?background(?:-color)?:\s*var\(--paper\)")
+        self.assertRegex(CSS, r"\.footer[\s\S]*?color:\s*var\(--ink\)")
+
     def test_interactions_are_subtle_and_accessible(self):
         self.assertIn(".is-inview", CSS)
         self.assertIn("prefers-reduced-motion: reduce", CSS)
