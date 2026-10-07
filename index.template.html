@@ -6,7 +6,7 @@
 <meta name="description" content="{{SEO_DESCRIPTION}}">
 {{SEARCH_CONSOLE_META}}
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="theme-color" content="#2B211C">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="alternate" hreflang="nl-NL" href="{{CANONICAL}}"><link rel="alternate" hreflang="x-default" href="{{CANONICAL}}">
 <link rel="preload" as="image" href="{{HERO_IMAGE}}" fetchpriority="high">
 <meta property="og:title" content="{{OG_TITLE}}"><meta property="og:description" content="{{OG_DESCRIPTION}}"><meta property="og:type" content="website"><meta property="og:url" content="{{CANONICAL}}"><meta property="og:site_name" content="Baitan Thai Massage"><meta property="og:locale" content="nl_NL"><meta property="og:image" content="{{OG_IMAGE}}"><meta property="og:image:alt" content="{{HERO_ALT}}">
@@ -16,7 +16,36 @@
 </head>
 <body>
 <a class="skip-link" href="#main">Ga naar inhoud</a>
-<header class="header"><div class="container nav"><a class="brand" href="/" aria-label="Baitan home"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a><nav class="nav-links" aria-label="Hoofdnavigatie"><a class="nav-link" href="#massages">Behandelingen</a><a class="nav-link" href="#massagekeuze">Massagekeuze</a><a class="nav-link" href="#prijzen">Prijzen</a><a class="nav-link" href="#reviews">Reviews</a><a class="nav-link" href="#contact">Contact</a></nav><div class="nav-actions"><a class="btn" href="{{BOOKING_HREF}}"{{BOOKING_ATTRS}}>Boek je massage</a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></div></div></header>
+<header class="header" data-site-header>
+  <div class="container nav">
+    <a class="brand" href="/" aria-label="Baitan home"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a>
+    <nav class="nav-links" aria-label="Hoofdnavigatie">
+      <a class="nav-link" href="#massages">Behandelingen</a>
+      <a class="nav-link" href="#massagekeuze">Massagekeuze</a>
+      <a class="nav-link" href="#prijzen">Prijzen</a>
+      <a class="nav-link" href="#reviews">Reviews</a>
+      <a class="nav-link" href="#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn nav-book" href="{{BOOKING_HREF}}"{{BOOKING_ATTRS}}>Boek</a>
+      <button class="remedy-menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="site-menu" id="site-menu" data-menu-overlay role="dialog" aria-modal="true" aria-label="Baitan menu" hidden>
+  <div class="site-menu-shell">
+    <div class="site-menu-top">
+      <a class="brand" href="/" aria-label="Baitan home"><span class="brand-mark"><span>B</span></span><span class="brand-name">BAITAN</span></a>
+      <button class="site-menu-close" type="button" data-menu-close aria-label="Sluit menu"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="site-menu-grid">
+      <div class="site-menu-group"><div class="site-menu-label">Ontdek</div><a href="#massages">Behandelingen <span>↗</span></a><a href="#massagekeuze">Massagekeuze <span>↗</span></a><a href="#over">Over Baitan <span>↗</span></a></div>
+      <div class="site-menu-group"><div class="site-menu-label">Plan</div><a href="#prijzen">Prijzen <span>↗</span></a><a href="#contact">Contact &amp; route <span>↗</span></a><a href="{{BOOKING_HREF}}"{{BOOKING_ATTRS}}>Boek je massage <span>↗</span></a></div>
+      <div class="site-menu-group"><div class="site-menu-label">Baitan</div><a href="#reviews">Reviews <span>↗</span></a><a href="#cadeaubon">Cadeaubon <span>↗</span></a><a href="#faq">Veelgestelde vragen <span>↗</span></a></div>
+    </div>
+    <div class="site-menu-footer"><span>Thaise massage in Capelle aan den IJssel</span><a href="#contact">Openingstijden &amp; locatie</a></div>
+  </div>
+</div>
 <main id="main">
 {{HERO}}
 {{TRUSTBAR}}
