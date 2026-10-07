@@ -65,6 +65,7 @@ function initTreatmentReveals() {
   const cards = [...document.querySelectorAll('.treatment-visual')];
   if (!cards.length) return;
   const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)');
+  const touchCapable = () => coarsePointer.matches || navigator.maxTouchPoints > 0;
 
   const collapseOthers = active => {
     cards.forEach(card => {
@@ -86,7 +87,7 @@ function initTreatmentReveals() {
     const mediaLink = card.querySelector('.treatment-media[href]');
     if (mediaLink) {
       mediaLink.addEventListener('click', event => {
-        if (!coarsePointer.matches || card.classList.contains('is-expanded')) return;
+        if (!touchCapable() || card.classList.contains('is-expanded')) return;
         event.preventDefault();
         event.stopImmediatePropagation();
         collapseOthers(card);
@@ -95,7 +96,7 @@ function initTreatmentReveals() {
     }
 
     card.addEventListener('click', event => {
-      if (!coarsePointer.matches || event.target.closest('a, button')) return;
+      if (!touchCapable() || event.target.closest('a, button')) return;
       collapseOthers(card);
       setExpanded(card, !card.classList.contains('is-expanded'));
     });
