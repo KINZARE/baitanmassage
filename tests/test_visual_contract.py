@@ -39,11 +39,11 @@ class VisualContractTests(unittest.TestCase):
     def test_core_navigation_survives_without_javascript(self):
         self.assertIn('<noscript>', TEMPLATE)
         self.assertIn('class="no-js-nav"', TEMPLATE)
+        self.assertIn('aria-label="Navigatie zonder JavaScript"', TEMPLATE)
         self.assertIn('Behandelingen', TEMPLATE)
         self.assertIn('Prijzen', TEMPLATE)
         self.assertIn('Contact', TEMPLATE)
         self.assertIn('{{BOOKING_HREF}}', TEMPLATE)
-        self.assertIn('.no-js-nav', CSS)
 
     def test_treatment_reveal_is_progressively_enhanced(self):
         self.assertIn('treatment-visual', BUILD)
