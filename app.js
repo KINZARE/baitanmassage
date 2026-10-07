@@ -19,9 +19,9 @@ function initMenuOverlay() {
     previouslyFocused = document.activeElement;
     overlay.hidden = false;
     document.body.classList.add('menu-overlay-open');
+    setExpanded(true);
     requestAnimationFrame(() => {
       overlay.classList.add('is-open');
-      setExpanded(true);
       closeButton.focus({ preventScroll: true });
     });
   };
