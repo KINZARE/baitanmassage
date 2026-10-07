@@ -92,9 +92,9 @@ async function desktopQA(browser) {
   await context.close();
 }
 
-async function mobileQA(browser) {
+async function mobileLayoutQA(browser, width, height, label, runInteractions = false) {
   const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
+    viewport: { width, height },
     isMobile: true,
     hasTouch: true
   });
@@ -102,28 +102,43 @@ async function mobileQA(browser) {
   await page.goto(baseURL, { waitUntil: 'networkidle' });
 
   await whiteSurfaces(page);
-  await noHorizontalOverflow(page, 'mobile');
+  await noHorizontalOverflow(page, label);
 
-  const firstCard = page.locator('.treatment-visual').first();
-  const media = firstCard.locator('.treatment-media');
-  await media.tap();
-  invariant(await firstCard.getAttribute('aria-expanded') === 'true', 'first treatment tap did not reveal card');
-  invariant(await page.locator('#treatmentDialog').evaluate(el => !el.open), 'legacy treatment modal opened on first reveal tap');
-  await page.waitForTimeout(450);
+  const headerBox = await page.locator('.header').boundingBox();
+  const heroBox = await page.locator('.hero').boundingBox();
+  const trustBox = await page.locator('.trustbar').boundingBox();
+  invariant(headerBox && Math.abs(headerBox.height - 72) <= 2, `${label}: header should be 72px, got ${headerBox?.height}`);
+  invariant(heroBox && Math.abs(heroBox.height - (height - 72)) <= 3, `${label}: hero should fill first viewport below header: ${heroBox?.height} vs ${height - 72}`);
+  invariant(trustBox && trustBox.y >= height - 2, `${label}: content after hero appears in first viewport at y=${trustBox?.y}`);
 
-  const metaBox = await firstCard.locator('.treatment-meta').boundingBox();
-  invariant(metaBox && metaBox.height > 0, 'mobile treatment metadata remains collapsed after first tap');
+  const heroCTA = page.locator('.hero-actions .btn').first();
+  const ctaBox = await heroCTA.boundingBox();
+  invariant(ctaBox && ctaBox.y + ctaBox.height <= height + 1, `${label}: primary booking CTA falls below first viewport`);
+  invariant(await page.locator('.hero-actions .text-link').isHidden(), `${label}: secondary hero action should be hidden on mobile`);
+  invariant(await page.locator('.hero-location').isHidden(), `${label}: location should move below hero on mobile`);
 
-  const menuToggle = page.locator('[data-menu-toggle]');
-  await menuToggle.tap();
-  invariant(await page.locator('[data-menu-overlay]').isVisible(), 'mobile menu overlay did not open');
-  const menuBox = await page.locator('[data-menu-overlay]').boundingBox();
-  invariant(menuBox && menuBox.width <= 390.5, `mobile menu exceeds viewport: ${menuBox?.width}`);
-  await page.locator('[data-menu-close]').tap();
+  if (runInteractions) {
+    const firstCard = page.locator('.treatment-visual').first();
+    const media = firstCard.locator('.treatment-media');
+    await media.tap();
+    invariant(await firstCard.getAttribute('aria-expanded') === 'true', 'first treatment tap did not reveal card');
+    invariant(await page.locator('#treatmentDialog').evaluate(el => !el.open), 'legacy treatment modal opened on first reveal tap');
+    await page.waitForTimeout(450);
+
+    const metaBox = await firstCard.locator('.treatment-meta').boundingBox();
+    invariant(metaBox && metaBox.height > 0, 'mobile treatment metadata remains collapsed after first tap');
+
+    const menuToggle = page.locator('[data-menu-toggle]');
+    await menuToggle.tap();
+    invariant(await page.locator('[data-menu-overlay]').isVisible(), 'mobile menu overlay did not open');
+    const menuBox = await page.locator('[data-menu-overlay]').boundingBox();
+    invariant(menuBox && menuBox.width <= width + 0.5, `mobile menu exceeds viewport: ${menuBox?.width}`);
+    await page.locator('[data-menu-close]').tap();
+  }
 
   if (outDir) {
     await fs.mkdir(outDir, { recursive: true });
-    await page.screenshot({ path: path.join(outDir, 'mobile.png'), fullPage: true });
+    await page.screenshot({ path: path.join(outDir, `mobile-${width}x${height}.png`), fullPage: true });
   }
 
   await context.close();
@@ -132,9 +147,11 @@ async function mobileQA(browser) {
 const browser = await chromium.launch({ headless: true });
 try {
   await desktopQA(browser);
-  await mobileQA(browser);
+  await mobileLayoutQA(browser, 360, 800, 'mobile-360x800');
+  await mobileLayoutQA(browser, 390, 844, 'mobile-390x844', true);
+  await mobileLayoutQA(browser, 430, 932, 'mobile-430x932');
   if (outDir) {
-    await fs.writeFile(path.join(outDir, 'report.json'), JSON.stringify({ ok: true, url: baseURL, checked: ['desktop', 'mobile', 'menu', 'touch-reveal', 'keyboard-reveal', 'faq', 'choice', 'booking-link', 'map-consent', 'white-surfaces', 'overflow'] }, null, 2));
+    await fs.writeFile(path.join(outDir, 'report.json'), JSON.stringify({ ok: true, url: baseURL, checked: ['desktop', 'mobile-360x800', 'mobile-390x844', 'mobile-430x932', 'viewport-hero', 'menu', 'touch-reveal', 'keyboard-reveal', 'faq', 'choice', 'booking-link', 'map-consent', 'white-surfaces', 'overflow'] }, null, 2));
   }
   console.log('Baitan browser QA passed');
 } finally {
