@@ -49,6 +49,8 @@ class VisualContractTests(unittest.TestCase):
         self.assertIn('stopImmediatePropagation', JS)
         self.assertRegex(JS, r"mediaLink\.addEventListener\('click',[\s\S]*?capture:\s*true")
         self.assertIn('navigator.maxTouchPoints', JS)
+        self.assertIn("pointerType === 'touch'", JS)
+        self.assertIn('touchPending', JS)
 
     def test_menu_interaction_is_keyboard_accessible(self):
         self.assertIn('initMenuOverlay', JS)
