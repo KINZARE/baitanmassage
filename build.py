@@ -79,11 +79,11 @@ def hero(site):
     h = site["hero"]
     book_href = booking_href(site)
     book_attrs = booking_attrs(site)
-    return f'''<section class="hero" id="home"><div class="hero-copy"><h1>{esc(h.get('title'))}</h1><p class="lead">{esc(h.get('text'))}</p><div class="hero-actions"><a class="btn" href="{esc(book_href)}"{book_attrs}>{esc(h.get('primaryButton'))}</a><a class="text-link" href="#massages">{esc(h.get('secondaryButton'))}</a></div><p class="hero-location">Hollandsch Diep 71–73 · Capelle aan den IJssel</p></div><figure class="hero-photo"><img src="{esc(h.get('image'))}" alt="{esc(h.get('imageAlt'))}" width="1280" height="720" fetchpriority="high" decoding="async"><figcaption class="photo-badge">Sfeerbeeld</figcaption></figure></section>'''
+    return f'''<section class="hero" id="home"><div class="hero-copy"><h1>{esc(h.get('title'))}</h1><p class="lead">{esc(h.get('text'))}</p><div class="hero-actions"><a class="btn" href="{esc(book_href)}"{book_attrs}>{esc(h.get('primaryButton'))}</a><a class="text-link" href="#massages">{esc(h.get('secondaryButton'))}</a></div><p class="hero-location">{esc(site.get('addressLine1'))} · {esc(site.get('trust',{}).get('location'))}</p></div><figure class="hero-photo"><img src="{esc(h.get('image'))}" alt="{esc(h.get('imageAlt'))}" width="1280" height="720" fetchpriority="high" decoding="async"><figcaption class="photo-badge">Sfeerbeeld</figcaption></figure></section>'''
 
 
 def intro_section(site):
-    return '<section class="section intro-section"><div class="container intro-grid"><h2>Thaise technieken.<br>Persoonlijke aandacht.</h2><p>Een goede massage past bij jou. Bij Baitan kies je uit vijf behandelingen, van Thaise massage met warme olie tot een massage met warme stenen. Bekijk rustig het aanbod of laat de massagekeuze je op weg helpen.</p></div></section>'
+    return '<section class="section intro-section"><div class="container intro-grid"><h2>Thaise technieken.<br>Persoonlijke aandacht.</h2><p>Een goede massage past bij jou. Bij Baitan kies je uit verschillende behandelingen, van Thaise massage met warme olie tot een massage met warme stenen. Bekijk rustig het aanbod of laat de massagekeuze je op weg helpen.</p></div></section>'
 
 
 def trustbar(site):
@@ -302,7 +302,8 @@ def subpage_head(site, title, description, canonical, breadcrumbs=None, noindex=
             items.append({"@type":"ListItem","position":pos,"name":name,"item":url})
         breadcrumb_schema='<script type="application/ld+json">'+json.dumps({"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":items},ensure_ascii=False,separators=(',',':'))+'</script>'
     extra=extra_schema or ''
-    return f"""<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description)}"><meta name="robots" content="{robots_value}"><meta name="theme-color" content="#2B211C"><link rel="canonical" href="{esc(canonical)}"><link rel="alternate" hreflang="nl-NL" href="{esc(canonical)}"><link rel="alternate" hreflang="x-default" href="{esc(canonical)}"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(description)}"><meta property="og:type" content="website"><meta property="og:url" content="{esc(canonical)}"><meta property="og:site_name" content="Baitan Thai Massage"><meta property="og:locale" content="nl_NL"><meta property="og:image" content="{image}"><meta property="og:image:alt" content="{image_alt}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(description)}"><meta name="twitter:image" content="{image}"><meta name="twitter:image:alt" content="{image_alt}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">{breadcrumb_schema}{extra}</head><body>"""
+    site_payload=json.dumps(site,ensure_ascii=False).replace('</','<\\/')
+    return f"""<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description)}"><meta name="robots" content="{robots_value}"><meta name="theme-color" content="#2B211C"><link rel="canonical" href="{esc(canonical)}"><link rel="alternate" hreflang="nl-NL" href="{esc(canonical)}"><link rel="alternate" hreflang="x-default" href="{esc(canonical)}"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(description)}"><meta property="og:type" content="website"><meta property="og:url" content="{esc(canonical)}"><meta property="og:site_name" content="Baitan Thai Massage"><meta property="og:locale" content="nl_NL"><meta property="og:image" content="{image}"><meta property="og:image:alt" content="{image_alt}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(description)}"><meta name="twitter:image" content="{image}"><meta name="twitter:image:alt" content="{image_alt}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">{breadcrumb_schema}{extra}</head><body><script>window.BAITAN_SITE={site_payload};</script>"""
 
 def subpage_header(site):
     book_href=booking_href(site); book_attrs=booking_attrs(site)
@@ -372,9 +373,10 @@ def contact_page(site):
 def not_found_page(site):
     base=str(site['seo']['canonical']).rstrip('/')
     body='''<main id="main"><section class="detail-hero"><div class="container"><div class="eyebrow">404</div><h1>Pagina niet gevonden</h1><p>Ga terug naar Baitan of bekijk de massages en prijzen.</p><div class="hero-actions"><a class="btn" href="/">Home</a><a class="btn btn-outline" href="/massages">Massages</a></div></div></section></main>'''
-    return subpage_head(site,'Pagina niet gevonden | Baitan','Deze pagina bestaat niet of is verplaatst.',base+'/404',noindex=True)+subpage_header(site)+body+footer(site)+whatsapp_float(site)+'</body></html>'
+    return subpage_head(site,'Pagina niet gevonden | Baitan','Deze pagina bestaat niet of is verplaatst.',base+'/404',noindex=True)+subpage_header(site)+body+footer(site)+whatsapp_float(site)+'<script src="/app.js"></script></body></html>'
 
-def modern_markup(document):
+def modern_markup(document, site):
+    document = document.replace('href="/#boeken"', 'href="' + esc(booking_href(site)) + '"' + booking_attrs(site))
     document = re.sub(r'<(div|span) class="eyebrow">[^<]*</\1>', '', document)
     preload = '<link rel="preload" href="/assets/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>'
     return document.replace('<link rel="stylesheet" href="/styles.css">', preload + '<link rel="stylesheet" href="/styles.css">')
@@ -452,7 +454,7 @@ def build():
     if (ROOT/'assets').exists(): shutil.copytree(ROOT/'assets',DIST/'assets')
     shutil.copytree(ROOT/'data',DIST/'data')
     for page in DIST.glob('*.html'):
-        page.write_text(modern_markup(page.read_text(encoding='utf-8')), encoding='utf-8')
+        page.write_text(modern_markup(page.read_text(encoding='utf-8'), site), encoding='utf-8')
     print('Baitan website gebouwd in dist/')
 
 if __name__=='__main__':
