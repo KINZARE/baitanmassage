@@ -4,6 +4,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
+MENU_CSS = (ROOT / "assets" / "menu-progressive.css").read_text(encoding="utf-8")
 JS = (ROOT / "app.js").read_text(encoding="utf-8")
 DESIGN = (ROOT / "DESIGN.md").read_text(encoding="utf-8")
 TEMPLATE = (ROOT / "index.template.html").read_text(encoding="utf-8")
@@ -46,10 +47,12 @@ class VisualContractTests(unittest.TestCase):
         self.assertIn('{{BOOKING_HREF}}', TEMPLATE)
 
     def test_mobile_core_navigation_survives_javascript_failure(self):
+        self.assertIn('/assets/menu-progressive.css', TEMPLATE)
         self.assertIn("classList.add('menu-enhanced')", JS)
-        self.assertRegex(CSS, r"\.remedy-menu-toggle\s*\{[^}]*display:\s*none")
-        self.assertRegex(CSS, r"\.menu-enhanced\s+\.remedy-menu-toggle\s*\{[^}]*display:\s*grid")
-        self.assertRegex(CSS, r"@media \(max-width: 1050px\)[\s\S]*?\.menu-enhanced\s+\.nav-links\s*\{[^}]*display:\s*none")
+        self.assertRegex(MENU_CSS, r"\.remedy-menu-toggle\s*\{[^}]*display:\s*none")
+        self.assertRegex(MENU_CSS, r"\.menu-enhanced\s+\.remedy-menu-toggle\s*\{[^}]*display:\s*grid")
+        self.assertRegex(MENU_CSS, r"@media \(max-width: 1050px\)[\s\S]*?\.nav-links\s*\{[^}]*display:\s*flex")
+        self.assertRegex(MENU_CSS, r"@media \(max-width: 1050px\)[\s\S]*?\.menu-enhanced\s+\.nav-links\s*\{[^}]*display:\s*none")
 
     def test_treatment_reveal_is_progressively_enhanced(self):
         self.assertIn('treatment-visual', BUILD)
