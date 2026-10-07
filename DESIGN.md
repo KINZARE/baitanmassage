@@ -30,7 +30,7 @@ Clay buttons use a deeper Espresso text token, #190F0A, because both Ivory and t
 - Existing logo keeps its original Georgia lettering and mark rather than being redesigned.
 - Display 44–76px, section headings 35–54px, compact mobile scale. Body 16px; secondary labels 12–14px.
 - Spacing: 4, 8, 12, 16, 24, 32, 48, 64, 96. Content max 1280px, desktop gutters 48px, phone gutters 20px.
-- Buttons 6px radius, touch controls at least 44px; photos have square edges; no shadows on content sections.
+- Buttons use a 6px radius. Base buttons have a 50px minimum height, with compact mobile variants at 44–48px; menu and dialog-close controls are 44px. Compact price booking links use 36px and footer links 32px minimum height. Photos have square edges; content sections have no shadows.
 
 ## Surface contract: public website
 
