@@ -45,6 +45,12 @@ class VisualContractTests(unittest.TestCase):
         self.assertIn('Contact', TEMPLATE)
         self.assertIn('{{BOOKING_HREF}}', TEMPLATE)
 
+    def test_mobile_core_navigation_survives_javascript_failure(self):
+        self.assertIn("classList.add('menu-enhanced')", JS)
+        self.assertRegex(CSS, r"\.remedy-menu-toggle\s*\{[^}]*display:\s*none")
+        self.assertRegex(CSS, r"\.menu-enhanced\s+\.remedy-menu-toggle\s*\{[^}]*display:\s*grid")
+        self.assertRegex(CSS, r"@media \(max-width: 1050px\)[\s\S]*?\.menu-enhanced\s+\.nav-links\s*\{[^}]*display:\s*none")
+
     def test_treatment_reveal_is_progressively_enhanced(self):
         self.assertIn('treatment-visual', BUILD)
         self.assertIn('treatment-body', BUILD)
