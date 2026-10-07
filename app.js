@@ -59,6 +59,8 @@ function initMenuOverlay() {
       first.focus();
     }
   });
+
+  document.documentElement.classList.add('menu-enhanced');
 }
 
 function initTreatmentReveals() {
