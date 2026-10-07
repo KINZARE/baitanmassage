@@ -20,6 +20,8 @@ class VisualContractTests(unittest.TestCase):
         self.assertRegex(CSS, r"\.booking-concise[\s\S]*?background(?:-color)?:\s*var\(--paper\)")
         self.assertRegex(CSS, r"\.footer[\s\S]*?background(?:-color)?:\s*var\(--paper\)")
         self.assertRegex(CSS, r"\.footer[\s\S]*?color:\s*var\(--ink\)")
+        self.assertNotIn("rgba(255, 255, 255, 0.96)", CSS)
+        self.assertRegex(CSS, r"\.header\s*\{[^}]*background:\s*var\(--paper\)")
 
     def test_interactions_are_subtle_and_accessible(self):
         self.assertIn(".is-inview", CSS)
