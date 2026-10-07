@@ -20,10 +20,8 @@ function initMenuOverlay() {
     overlay.hidden = false;
     document.body.classList.add('menu-overlay-open');
     setExpanded(true);
-    requestAnimationFrame(() => {
-      overlay.classList.add('is-open');
-      closeButton.focus({ preventScroll: true });
-    });
+    closeButton.focus({ preventScroll: true });
+    requestAnimationFrame(() => overlay.classList.add('is-open'));
   };
 
   const closeMenu = () => {
